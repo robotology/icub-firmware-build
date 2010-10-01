@@ -11,7 +11,7 @@ while read parLine; do
 	boardId=`echo "$parLine"|awk 'BEGIN { FS=" "}; {print $3}'`
 	firmware=`echo "$parLine"|awk 'BEGIN { FS=" "}; {print $4}'`
 	
-	cmd="canLoader20 --canDeviceType $canDevice --canDeviceNum $deviceNum --boardId $boardId --firmware $firmware"
+	cmd="canLoader --canDeviceType $canDevice --canDeviceNum $deviceNum --boardId $boardId --firmware $firmware"
 
 	# skip comments
 	if [ "k$canDevice" = "k//" ]; then
