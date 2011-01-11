@@ -5,13 +5,15 @@ count=0
 arrayOfRet=0
 arrayOfCmd=0
 ret=0
+loop_number=0
 
 #-o [ ${arrayOfRet[$count]} -gt 0]
 
 while [[ ${count} -eq 0 || ${ret} -eq 0 ]] 
 do
-	echo "start loop"
-    echo "--------------------------------------------------"
+	echo "start loop number $loop_number"
+        echo "--------------------------------------------------"
+	loop_number=`expr $loop_number + 1`
 while read parLine; do
 	canDevice=`echo $parLine | awk 'BEGIN { FS=" "}; {print $1}'`
 	deviceNum=`echo "$parLine"|awk 'BEGIN { FS=" "}; {print $2}'`
