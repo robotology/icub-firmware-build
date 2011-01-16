@@ -1,0 +1,9 @@
+// left_arm
+cfw2can 1 1 2BLL.1.50.out.S
+cfw2can 1 2 2BLL.1.57.out.S
+
+// right_arm
+cfw2can 2 1 2BLL.1.50.out.S
+cfw2can 2 2 2BLL.1.57.out.S
+
+
