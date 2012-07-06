@@ -5,6 +5,27 @@ count=0
 arrayOfRet=0
 arrayOfCmd=0
 
+# test if the parameter exists
+if [ -z $filename ]
+   then
+       echo "no filename specified, using default configuration:"
+       filename="$ICUB_ROOT/app/$ICUB_ROBOTNAME/scripts/firmwareUpdate.txt"
+       echo "$filename"  
+fi
+
+#test if the file exists
+if [ ! -e $filename ]
+   then 
+	echo "cannot open the firwmare description file"
+        exit
+fi 
+
+echo "Do you want to proceed with the firmware update? (Y/N)"
+read answer
+if test "$answer" != "Y" -a "$answer" != "y";
+then exit 0;
+fi
+
 while read parLine; do
 	canDevice=`echo $parLine | awk 'BEGIN { FS=" "}; {print $1}'`
 	deviceNum=`echo "$parLine"|awk 'BEGIN { FS=" "}; {print $2}'`
