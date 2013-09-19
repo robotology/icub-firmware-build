@@ -9,7 +9,7 @@ arrayOfCmd=0
 if [ -z $filename ]
    then
        echo "no filename specified, using default configuration:"
-       filename="$ICUB_ROOT/app/$ICUB_ROBOTNAME/scripts/firmwareUpdate.txt"
+       filename=`yarp resource --find scripts/firmwareUpdate.txt 2>/dev/null`
        echo "$filename"  
 fi
 
