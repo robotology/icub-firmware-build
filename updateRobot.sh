@@ -1,25 +1,44 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 filename=$1
 count=0
 arrayOfRet=0
 arrayOfCmd=0
 
+echo ""
+echo "----------------------------------------------"
+echo "Welcome to the automatic firmware updater tool"
+echo "----------------------------------------------"
+echo ""
+
 # test if the parameter exists
 if [ -z $filename ]
    then
-       echo "no filename specified, using default configuration:"
-       filename=`yarp resource --find scripts/firmwareUpdate.txt 2>/dev/null`
-       echo "$filename"  
+       echo "no filename specified, using default configuration..."
+       filename=`yarp resource --find scripts/firmwareUpdate.txt 2>/dev/null | sed 's/"\(.\+\)"/\1/g'`
 fi
 
 #test if the file exists
 if [ ! -e $filename ]
    then 
-	echo "cannot open the firwmare description file"
+	echo "cannot open the firmware description file in default directory, searching in alternate path..."
+        filename=`yarp resource --find firmwareUpdate.txt 2>/dev/null | sed 's/"\(.\+\)"/\1/g'`
+fi 
+
+#test if the file exists
+if [ ! -e $filename ]
+   then 
+	echo "also alternate path failed. Cannot open the firmware description file"
         exit
 fi 
 
+echo ""
+echo "found firmware description file:"
+echo "$filename"
+echo ""
+
+echo "Remember: Never update the firmware if iCubInterface/robotInterface is running!"
+echo "If you are not sure about the current status of the robot, turn off the motor boards, turn them on again and wait at 5 seconds before proceeding."
 echo "Do you want to proceed with the firmware update? (Y/N)"
 read answer
 if test "$answer" != "Y" -a "$answer" != "y";
