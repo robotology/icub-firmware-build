@@ -1,0 +1,2 @@
+The legacy versions are those which were used before July 2016 and still use version 0 (hence: legacy) 
+of the updater protocol described by file EoUpdaterProtocol.h
