@@ -1,0 +1,335 @@
+
+
+# Fundamentals
+# Before you start working on ETH boards for programming its FW, you need to know some basic information about what is placed on an ETH board,
+# how the ETH network is done, how the bootstrap process of a ETH boards behaves and where are placed the binaries into the FLASH.
+
+The available ETH boards at date of August 2016 are: EMS, MC4PLUS, MC2PLUS. 
+
+All this boards mount the STM32F407 MPU and an external EEPROM, a 2-port 100mbps ETH switch which gives UDP communication with the PC104.
+The EMS also has two CAN buses, the MC4PLUS and MC2PLUS one CAN bus.
+
+The MPU has 1MB of internal FLASH which is used to host the binaries, and 128MB of internal RAM (plus extra 64 MB of RAM, so far unused) 
+for the use of program execution.
+
+
+
+     ---------------------------------------
+    |    ------------                       |
+    |   |   EEPROM   |                      |
+    |    ------------     -------------     |
+    |         |          |             |    C1 CAN1
+    |    ------------    |   OTHER     |    C2 CAN2 (only EMS board)
+    |   | STM32F407  | --| ELECTRONICS | -> #  
+    |    ------------    |             |    # OTHER PORTS (power supply, encoders, PWM, etc.)
+    |         |          |             |    #
+    |    ------------     -------------     |
+    |   | ETH SWITCH |                      |
+    |    ------------                       |
+    |     |        |                        |
+     -----E1-------E2-----------------------
+         ETH0     ETH1  
+
+    Fig.1 - Basic components of the ETH board.
+            All ETH boards have the same above basic structure and may have different specialization ports (e.g., the EMS doe not have PWM ports).
+            
+
+ 
+The ETH boards live inside the 100mbps ETH network of the PC104 connected in daisy chain. The PC104 has IP address 10.0.1.104 and the ETH boards have
+IP addresses 10.0.1.x. Attached to the ETH boards there can be CAN boards (2FOC, MAIS, MTB, etc.).
+  
+     
+    IP address 10.0.1.104
+     -------------
+    |     PC104   |                       
+     ------E------
+           |
+           |        IP address 10.0.1.1        
+           |         -------                          ----------------
+           |        |       |                    |---| CAN BOARD ID 1 |---|
+            ------ E1       C1 ------------------|    ----------------    |---------- ETC.
+                    |       |     
+            ------ E2       C1 -----------|     ----------------    |---------- ETC.
+           |        |       |             |----| CAN BOARD ID 7 |---
+           |         -------                    ----------------
+           |
+           |        IP address 10.0.1.2
+           |         -------                          ----------------
+           |        |       |                    |---| CAN BOARD ID 1 |---|
+            ------ E1       C1 ------------------|    ----------------    |---------- ETC.
+                    |       |     
+            ------ E2       C1 -----------|     ----------------    |---------- ETC.
+           |        |       |             |----| CAN BOARD ID 1 |---
+           |         -------                    ----------------
+
+     Fig.2 - The mixed ETH/CAN network in the ETH robot. 
+             The ETH boards are connected to the PC104 in daisy chain using Ethernet. 
+             Attached to the CAN ports of the ETH boards there can be other CAN boards.
+ 
+
+
+The ETH boards offer control of the robot by means of an application which talks with yarprobotinterface. 
+This application however, is not execute at bootstrap straight away but after a few seconds.
+Historically, since CAN robots, before the final application is executed we provide a time of 5 seconds 
+from bootstrap to allow some sort of program running on PC104 to contact the boards and perform
+maintenance operations (change of address, FW update, etc.).
+
+The ETH boards implement this mechanism by means of three eProcesses: the eLoader, the eUpdater and the eApplication.
+The eLoader executes at power on, it typically launches the eUpdater. This one stays for 5 seconds to wait for messages
+on a given UDP port and if nothing arrives it finally launches the eApplication.
+
+In case of messages arriving to the eUpdater, the program does not jump anymore and talks to an external program 
+(the ethLoader or the canLoader) to perform the required operations. At the end, the external program forces a reset and the
+standard bootstrap procedure executes agin to have the eApplication after the canonical 5 seconds.
+
+To be more precise, the eLoader jumps to the START eProcess and then to the DEF eProcess. 
+The START and the DEF are always the eUpdater and the eApplication unless when one wants to perform FW update 
+of the eUpdater. This case will be described in another document.
+
+
+         ----------------------------------------------- 
+        | DEF eProcess  (typically the eApplication)    |              
+        | It executes forever until restart,            |
+        | unless it receives a UPD message on           |  
+        | a given port.                                 |<--
+         -----------------------------------------------    |
+                                                            |
+     -------------------------------------------------------
+    |
+    |    -----------------------------------------------
+     -- | START eProcess  (typically the eUpdater)      |              
+        | It executes for 5 seconds and then            |
+        | it jumps to DEF (unless it receives           |  
+        | a UDP message on a given port.                |<--
+         -----------------------------------------------    |
+                                                            |
+     -------------------------------------------------------
+    |
+    |    -----------------------------------------------
+     -- | eLoader eProcess                              |              
+        | It executes just after reset.                 |
+        | It reads from EEPROM where to jump.           |        
+        | Typically it jumps to START.                  |<-- (THE MPU EXITS THE RESET STATE)
+         -----------------------------------------------    
+
+ 
+    Fig.3 - Normal bootstrap scheme for the ETH board.
+            At start-up (caused by power on or restart message), the MPU executes the eLoader process.
+            The eProcess reads EEPROM and jumps to the eProcess labelled as START (which typically is the eUpdater).
+            The START eProcess waits for 5 seconds and if it is not contacted on a given UPD port it jumps to
+            the DEF process which is executed forever. In both these two eProcesses the reception of a UDP message
+            on a given port forces execution of the START eProcess.
+
+
+The binaries of these eProcesses are stored into the internal FLASH of the MPU. They can be programmed using the JTAG but also
+via UDP by means of the the eUpdater process.              
+ 
+ 
+ 
+    |   EEPROM                  |
+    |---------------------------|   
+    |   size = 1KB              |   
+    |   partition table         |   Contains information about where to bootstrap, versions of the applications etc.
+    |---------------------------|   <- starts at address 0
+
+    
+    Fig.4 -  The information stored inside EEPROM.
+    
+    
+                         
+    |   FLASH (total size = 1MB)|
+    |                           |
+    |---------------------------|
+    | partition-2: eApplication |
+    | starts at:   128KB        |   Contains the application which typically executes 5 sec after bootstrap and which is responsible to operate the robot
+    | size:        256KB        |   under the control of yarprobotinterface.
+    |                           |   The binary file can be found in EMS/bin/application/ems.hex or similar places for other ETH boards.
+    |                           |
+    |                           |   This partition may however contain a special application, the eApplPROGupdater, which we use to program partition-1 with a new eUpdater.
+    |                           |   The binary file can be found in EMS/bin/environment/emsApplPROGupdater.hex or similar places for other ETH boards. 
+    |                           |
+    |---------------------------|   <- starts at address 128KB    
+    | partition-1: eUpdater     |
+    | starts at:   32KB         |   Contains the eUpdater program which typically executes a few ms after bootstrap. 
+    | size:        96KB         |   It waits for 5 seconds and if not contacted by the ethLoader it forces execution of the application.
+    |                           |   If contacted by the ethLoader (or if there is nothing in the application partition-2)
+    |                           |   it enters in updating mode, so that the ethLoader can operate (e.g., change address, load FW, etc.).
+    |                           |   When in updating mode its LEDs blink at 0.5 Hz.
+    |                           |
+    |                           |   BE CAREFUL: it cannot load .hex files in its own partition-1. For this you must load in partition-2 a special
+    |                           |   application, the eApplPROGupdater, which can program partition-1.
+    |                           |   
+    |---------------------------|   <- starts at address 32KB       
+    | partition-0: eLoader      |
+    | starts at:   0KB          |   Contains the eLoader program which is the one executed at bootstrap or after that a HW reset is imposed. 
+    | size:        32K          |   It reads from the partition table placed in EEPROM which program to jump to and it executes it. 
+    |                           |   If nothing is found it enters in error mode by blinking all its LEDs very quickly.
+    |                           |   
+    |---------------------------|   <- starts at address 0KB   
+    
+    Fig.4 - The mapping of the binaries (called also eProcesses) into FLASH.
+                
+
+# Instructions  
+# Here are some basic instructions for preparing and updating the FW on an ETH board.
+
+
+We use the terms eLoader, eUpdater and eApplication to refer the process running on partitions 0, 1, and 2 of a generic ETH board. A special eApplication
+is the eApplPROGupdater which runs in partition-2 and is exclusively dedicated to the programming of the partition-1.
+ 
+The names of the eLoader and eUpdater for the various ETH boards are: emsLoader, emsUpdater, mc4plusLoader, mc4plusUpdater, mc2plusLoader, mc2plusUpdater.
+The names of the eApplication for the various boards are ... many. Typically we have ems.hex, mc4plus.hex etc. 
+
+In the following, we refer to the EMS board. For other boards the procedure is the same, but the names and the directories change accordingly.
+
+
+(1) First time preparation of the EMS board.
+
+    You must have an EMS board connected to a power supply and to a ULINKpro programming device (http://www.keil.com/ulinkpro).
+    Then you follow instructions in EMS/scripts/readme.txt to launch scripts which: erase FLASH and EEPROM, burn the eLoader into 
+    partition-0 and burn the eUpdater into partition-1 of the FLASH.
+   
+    After these operations the FW of the EMS board can be updated via Ethernet using the ethLoader program.  
+   
+    You must attach the ETH cable to the EMS, connect it to a host with address 10.0.1.104 and launch the ethLoader.
+    The ethLoader will find the EMS board at the default address 10.0.1.99 and you must change the default address 
+    into the chosen one (e.g., 10.0.0.1).
+   
+    Now the EMS can be safely mounted on the robot without giving any IP address conflict.
+    
+   
+(2) Installation of the application FW
+
+    Launch the ethLoader, start a discovery and repeat it until the GUI shows that the running process is "eUpdater".
+    Load the relevant binary file (e.g., ems.hex) from the EMS/bin/application/ folder. 
+    From ethLoader force the eApplication to have the DEF property by pressing the button "DEf2RUN = eApplication". 
+    With this property assigned to eApplication, the eLoader of the EMS board will execute the ems.hex application after 5 seconds from bootstrap. 
+    You can verify that by pressing the button "More Details" and by checking that the process #2 has the property "DEF".
+    
+    After the application FW is installed, if you want to use the robot see section (4).
+    
+
+(3) Update of the CAN boards connected to the ETH board
+
+    The ETH board can have CAN boards attached to one of its CAN buses: the EMS has two CAN buses, the MC4PLUS has one bus, the MC2PLUS does not have any.
+    The FW update of such CAN boards can be done at PC104 level using the canLoader programs.
+    
+    The canLoader can connect to the CAN buses (one or both) of a given ETH board only when the board runs the eUpdater process.
+
+    If the ETH board runs a recent application (ems application at least with v 2.48 dated 11 jul 2016, or mc4plus/mc2plus newer than july 2016),
+    then the canLoader is able to force execution of the eUpdater. Otherwise the user must run the ethLoader and execute a discovery.
+
+    Here are the steps to follow:
+    (a)  Launch the ethLoader and execute a discovery until you are sure that the EMS executes the eUpdater process.
+         If the EMS board has an application equal or newer than v 2.48 dated 11 jul 2016, then you may not perform this operation 
+         and jump directly to step (b).
+    (b)  Launch the canLoader, choose "ETH" from the proper menu, specify the wanted IP address and the wanted CAN bus (CAN1, CAN2, or CANx for both)
+    (c)  Press "Connect". 
+    (d)  It can happen one of the following situations, where the (d3) is the normal case.
+         (d1) If the ETH board is executing an application equal or newer than v 2.48 dated 11 jul 2016 and you have not executed step (a), the canLoader will 
+              force execution of eUpdater and print the warning to attempt connection again. You must restart from step (c).  
+         (d2) If the ETH board is surely executing the eUpdater but there are no CAN boards running of the specified CAN bus, then the connection fails.
+              With most recent versions of the eUpdater (version >= 2.20), a [DEBUG] print tells that the eUpdater has acked and that it is in CAN gateway.
+              In such a case, most likey the CAN boards are not running and you cannot perform any operation on them. You must quit as in step (f) and 
+              verify your HW.             
+         (d3) If the ETH board is executing eUpdater and there are CAN boards running on the specified CAN buses, then the GUI will show the found CAN boards
+              with all their possible information (address, running process, versions of application and of protocol, etc.). You can now perform operations
+              as in step (e).
+    (e)  You can select one or more CAN boards and perform FW update or whatever you need to do (change address, set additional info, etc.). At the end press
+         the "Disconnect" button.
+    (f)  After all operations, if you want to use the robot see section (4).
+    
+    
+(4) Normal operations on the robot
+
+    After any operation with ethLoader and canLoader, the ETH board is likely to run the eUpdater process.
+    
+    In such a state, if the user launches yarprobotinterface straight away, it will prints diagnostics about
+    not being able to find a given ETH board and stop itself. That happens because yarprobotinterface talks to 
+    an IP port which is made available only by the eApplication.
+
+    Hence, after any operation with ethLoader and canLoader, before launching yarprobotinterfce,
+    the user MUST send the ETH boards to execute the eApplication by following these steps:
+    
+    (a)  Launch ethLoader, perform a discovery, verify all ETH boards have the DEF properties associated to the eApplication (see section (2) for details),
+         verify that the version of the eApplication is correct.
+    (b)  Force restart of the boards and execution of eApplication with one of the following two alternative modes:
+         (b1)  select all boards, push button "Restart Board", exit ethLoader, wait a total of 15 seconds 
+               (5 seconds for the eApplication to start, 7-10 seconds to be sure that the eApplication performs socket binding with PC104 
+               and that sensor boards on CAN bus exit the canloader phase).
+         (b2)  exit the ethLoader, power motors off and on again, wait a total of 15 seconds (add extra 20-30 seconds if the robot has batteries on its back).  
+    (c)  the ETH boards are ready to talk to yarprobotinterface.          
+
+       
+   
+(5) Update of the application FW 
+
+    The application firmware EMS/bin/application/ems.hex is likely to change often in the life of the robot.
+   
+    You can verify which FW version the robot is running by launching a discovery procedure with ethLoader. The GUI will show the version, date and build date
+    of the running process. If nothing is shown, it may be that are running old versions of the updater (before version 2.20) or of the application.
+    In such a case, select a given EMS board, click the "More Details" button and look at the results in the window on the right.
+   
+    You can see what is the latest available FW version of the EMS by running the following commands:
+    -   make sure the repository is updated:
+        ..../icub-firmware-build> git pull --rebase
+    -   read the log of ems.hex file
+        ..../icub-firmware-build> git log --follow ETH/EMS/bin/application/ems.hex
+      
+    If the FW version on the EMS board is older than the one in repository then an update is recommended.
+   
+    To update the application FW you can operate as in point (2).
+    
+     After all operations, if you want to use the robot see section (4).
+
+     
+(6) Update of the loader FW    
+   
+   You can update also the loader FW in the partition-0, even if you need to do so very rarely.
+   
+   In doing this operation, be careful and update only one board at a time because with some upgrades the 
+   board may change its address into 10.0.1.99. 
+   The reason is that the eLoader always checks the validity of the core part of the EEPROM and if what read 
+   is not what expected, it resets it to the expected default values:
+   IP = 10.0.1.99, properties DEF START RUNNING all assigned to eUpdater.
+   
+   Moreover, typically one needs to update both the eLoader and the eUpdater. In such a case you MUST operate 
+   with one board at a time: first update the eLoader following instructions in this section, then update the 
+   eUpdater of the same board following instructions on the relevant section.
+   
+  
+   You can update the FW of the loader in partition-0 by following these steps
+   (a)  Launch the ethLoader and execute a discovery until you are sure that the EMS executes the eUpdater process.
+   (b)  Program the partition with button "Program eLoader" and load the file EMS/bin/environment/emsLoader.hex.
+   (c)  Verify that the new loader is correctly programmed by acting with button "More Details".
+   (d)  Send a "Restart Board" command and launch a new discovery to verify once more.
+   (e)  In case the address has changed to 10.0.1.99, just change it to its original address. If properties are not
+        correct, use the "DEF2RUN = eApplication" button to change them back.   
+        
+    After all operations, if you want to use the robot see section (4).
+        
+        
+(7) Update of the updater FW    
+   
+   The eUpdater is a complex program which uses UDP communication to talk to the ethLoader and to the canLoader.
+   Hence, it may need some changes in its lifetime.
+   
+   You can update the FW of the eUpdater in partition-1 by following these steps
+   (a)  Launch the ethLoader and execute a discovery until you are sure that the EMS executes the updater program.
+   (b)  Load the special application EMS/bin/environment/emsApplPROGupdater.hex
+   (c)  Send a "Restart Board" command and wait for at least 5 seconds. When you perform a new discovery 
+        the GUI of the ethLoader will show that the executing process is "eApplPROGupdater".
+   (d)  Load the new EMS/bin/environment/emsUpdater.hex with the button "Program eUpdater".
+   (e)  Now verify that the new updater can safely execute by clicking "Jump to eUpdater" and by clicking "Discover".
+        The GUI will show the new updater running. At this point, push button "DEF2RUN = eUpdater" and verify its effect 
+        by pressing "More Details". The properties of e-process #1 must be: DEF START RUNNING.
+        Now restart the board with the "Restart Board" button.  
+   (f)  Launch a new discovery and look at if the updater executes.
+   (g)  Now program the application with button "Program eApplication" using the EMS/bin/application/ems.hex file and click button
+        "DEF2RUN = eApplication" so that the normal behaviour is restored and the application executes 5 seconds after the reset. 
+
+              
+     After all operations, if you want to use the robot see section (4).
+
+
+                          
