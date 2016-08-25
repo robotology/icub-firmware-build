@@ -167,7 +167,7 @@ via UDP by means of the the eUpdater process.
     |                           |   
     |---------------------------|   <- starts at address 0KB   
     
-    Fig.4 - The mapping of the binaries (called also eProcesses) into FLASH.
+    Fig.5 - The mapping of the binaries (called also eProcesses) into FLASH.
                 
 
 # Instructions  
