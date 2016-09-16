@@ -32,7 +32,8 @@ In the following, we refer to the EMS board. For other boards the procedure is t
 (2) Installation of the application FW
 
     Launch the ethLoader, start a discovery and repeat it until the GUI shows that the running process is "eUpdater".
-    Load the relevant binary file (e.g., ems.hex) from the EMS/bin/application/ folder. 
+    Select the boards you want to upgrade.
+    Load the relevant binary file (e.g., ems.hex) from the EMS/bin/application/ folder by pressing the button "Program eApplication". 
     From ethLoader force the eApplication to have the DEF property by pressing the button "DEf2RUN = eApplication". 
     With this property assigned to eApplication, the eLoader of the EMS board will execute the ems.hex application after 5 seconds from bootstrap. 
     You can verify that by pressing the button "More Details" and by checking that the process #2 has the property "DEF".
@@ -111,7 +112,7 @@ In the following, we refer to the EMS board. For other boards the procedure is t
    
     To update the application FW you can operate as in point (2).
     
-     After all operations, if you want to use the robot see section (4).
+    After all operations, if you want to use the robot see section (4).
 
      
 (6) Update of the loader FW    
@@ -131,8 +132,8 @@ In the following, we refer to the EMS board. For other boards the procedure is t
   
    You can update the FW of the loader in partition-0 by following these steps
    (a)  Launch the ethLoader and execute a discovery until you are sure that the EMS executes the eUpdater process.
-   (b)  Program the partition with button "Program eLoader" and load the file EMS/bin/environment/emsLoader.hex.
-   (c)  Verify that the new loader is correctly programmed by acting with button "More Details".
+   (b)  Select only one board (IT IS VERY IMPORTANT!!) and program the partition with button "Program eLoader" to load the file EMS/bin/environment/emsLoader.hex.
+   (c)  Verify that the new eLoader is correctly programmed by acting with button "More Details".
    (d)  Send a "Restart Board" command and launch a new discovery to verify once more.
    (e)  In case the address has changed to 10.0.1.99, just change it to its original address. If properties are not
         correct, use the "DEF2RUN = eApplication" button to change them back.   
