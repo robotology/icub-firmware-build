@@ -1,5 +1,4 @@
 
 in here there is the fw of the ems application.
+it can be used both for cer and icub robots
 load it using the ethLoader.
-
-the file ems-v1mec.hex is a fw specially built for robot iCubGenova04 
