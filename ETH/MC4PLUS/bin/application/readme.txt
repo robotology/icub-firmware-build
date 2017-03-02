@@ -1,6 +1,5 @@
 
-in here there is the fw of the MC4PLUS application:
-- mc4plus_mecV3.hex for V3 mechanics (head+forearm)
-- mc4plus_mecCER.hex for CER mechanics (wrists)
+In here there is the fw of the MC4PLUS application.
+Use it(mc4plus.hex) for both cer and iCub robots.
 
-load it using the ethLoader.
+Load it using the ethLoader.
