@@ -1,0 +1,83 @@
+
+
+The program FirmwareUpdater is the tool with which we perform check and update of FW on iCub.
+
+Here are quick instructions for its use.
+
+
+1. How to launch the GUI.
+   Type the following command:
+   > FirmwareUpdater
+   Just make sure the file firmwareupdater.ini of your robot is copied somewhere in the path of yarp resource finder.
+   The best ways to do it is to install robots-configuration with the instructions found in robots-configuration/README.md.
+   As an alternative type: 
+   > FirmwareUpdater --from YOURPATH/firmwareupdater.ini
+   As a result of the above, the GUI will load all the devices specified in the found firmwareupdater.ini file.
+   
+   
+2. How to populate boards on the GUI.
+   Select the chosen device and click the button `Discover`.
+   There are two device types: CFW2 and ETH. CAN-based robots have only CFW2 devices, first generation of ETH-based robots have 
+   one ETH and two CFW2 devices, most recent ETH-robots have only one ETH device.   
+ 
+ 
+3. How to retrieve information about the boards.
+   Information is retrieved by the discovery operation. Most important information on a board is summarised in each row.
+   By highlighting one row, more information appears on the right part of the GUI labeled `Board Properties`. 
+ 
+ 
+4. On the CFW2 driver.   
+   There can be only CAN boards. Allowed operations are shown in the bottom rigth part of the GUI labeled `Controls`.
+   One can typically: change value of CAN `Address`, edit `Info`, load a new application firmware.
+ 
+ 
+5. On the ETH driver.
+   There are ETH boards (the likes of: ems4, mc4plus, mc2plus) which may have two states: application or maintenance.
+   - ETH board in application state.
+     It means that the board is ready to operate with yarprobotinterface. When in this state, FirmwareUpdater can only 
+     retrieve information from the ETH board (but NOT about the CAN buses underneath it!), and cannot change anything of it. 
+     The only possible operation is `Force ETH Maintenance` which sends the selected board in maintenance state.
+     DO NOT DO that if yarprobotinterface is running. 
+   - ETH board is in maintenance state.
+     It means that one can discover CAN boards underneath as if it were a CFW2 device. But mainly one can operate changes 
+     on the selected board (change IP/CAN `Address`, edit `Info`, update the application firmware).
+     When all the wanted operations are terminated, one can also send the ETH board back to application state by pressing 
+     the button `Force ETH Application`. 
+
+6. Example: how to update the FW of all the EMS boards.
+   a. Turn motors power on.
+   b. Start the FirmwareUpdater GUI and launch a `Discover` on the ETH device.
+   c. Select all the EMS boards. Tip: use the mouse to tick the first and then click the [v] icon. That completes the 
+      selection of all boards of the same type. 
+   d. Push the `Force ETH Maintenance` button. 
+   e. Select all the EMS boards in maintainance and push the `Upload Application` button. Load the ems.hex file. 
+   f. Check on the `Board Properties` panel that the FW version is the correct one. 
+   g. Select all the EMS boards and send them in application state by pressing the `Force ETH Application` button.
+   h. Quit the GUI.
+   
+7. Example: how to update the FW of all the 2FOC boards under a given EMS.
+   a. Turn motor power on.
+   b. Start the FirmwareUpdater GUI and launch a `Discover` on the ETH device.
+   c. Select the target EMS board and push the `Force ETH Maintenance` button. 
+   d. Highligth the target EMS board and press the `Discover` button.
+   e. Select the 2FOC boards beneath the given EMS and press button `Upload Application`. Load the 2FOC.hex file.
+   f. Check on the `Board Properties` panel that the FW version is the correct one.
+   g. Select the EMS board and send it back in application state by pressing the `Force ETH Application` button.
+   h. Quit the GUI.  
+   
+8. Example: how to update the FW of all the MTB boards under CFW2.
+   a. Turn motor power on.
+   b. Start the FirmwareUpdater GUI and launch a `Discover` on the relevant CFW2 device.
+   c. Select the MTB boards beneath the CFW2 device and press button `Upload Application`. Load the skin.hex file. 
+   d. Check on the `Board Properties` panel that the FW version is the correct one.
+   e. Quit the GUI.  
+
+   
+Disclaimer
+IT IS VERY IMPORTANT NOT TO
+Never attempt to program a CAN board with the FW of an ETH board. Because some CAN boards do not have protection vs 
+wrong FW and may have damages in the bootloader section which make them dead to any CAN-based update. 
+
+
+
+
