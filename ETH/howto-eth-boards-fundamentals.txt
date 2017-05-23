@@ -142,7 +142,7 @@ via UDP by means of the the eUpdater process.
     |---------------------------|
     | partition-2: eApplication |
     | starts at:   128KB        |   Contains the application which typically executes 5 sec after bootstrap and which is responsible to operate the robot
-    | size:        256KB        |   under the control of yarprobotinterface.
+    | size:        384KB        |   under the control of yarprobotinterface.
     |                           |   The binary file can be found in EMS/bin/application/ems.hex or similar places for other ETH boards.
     |                           |
     |                           |   This partition may however contain a special application, the eApplPROGupdater, which we use to program partition-1 with a new eUpdater.
