@@ -1,4 +1,6 @@
 
+# Note of 29may17: this document is the old version valid for use with ethLoader and canLoader.
+# Read file FirmwareUpdater.readme.quick.txt instead.
 
 # Simple FW update  
 # Here are some simple instructions updating the FW on an ETH board and on the attached CAN boards.

@@ -1,4 +1,6 @@
 
+# Note of 29may17: this document is the old version valid for use with ethLoader and canLoader.
+# Read file FirmwareUpdater.readme.maintenance.of.eth.robots.txt instead.
 
 # Programming Instructions  
 # Here are some basic instructions for preparing and updating the FW on an ETH board and how updating FW on the attached CAN boards.

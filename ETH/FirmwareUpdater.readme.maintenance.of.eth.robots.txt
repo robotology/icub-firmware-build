@@ -1,0 +1,387 @@
+
+
+# Maintenance of FW in ETH robots using FirmwareUpdater  
+# Here are some instructions for preparing and updating the FW on an ETH board and how to update FW on the attached CAN 
+# boards using the FirmwareUpdater. Similar operations could be performed with ethLoader and canLoader, but the use of 
+# these two programs is deprecated, hence it will not be documented anymore.
+
+    ---------------------------------------------------------------------------------------------------------------------------
+    Document description
+    ---------------------------------------------------------------------------------------------------------------------------
+    
+    In this file you will find every detail of operations which you can perform with FirmwareUpdater on ETH robots. 
+    
+    In particular there are the following sections.
+    (1) First time preparation of the EMS board.
+    (2) States of the EMS board: application and maintenance
+    (3) Check and update of the application FW of the EMS board
+    (4) Check and update of the CAN boards connected to the EMS board
+    (5) Advanced operation: update of the loader FW in EMS boards 
+    (6) Advanced operation: update of the updater FW in EMS boards 
+    (7) Advanced operation: recover an EMS board to which was uploaded a wrong FW.
+    (8) Advanced operation: recover a CAN board to which was uploaded a wrong FW.    
+
+    
+    Read file "FirmwareUpdater.readme.fulldetails.txt" for details on the layout and use of the FirmwareUpdater program.
+    Read file "FirmwareUpdater.readme.quick.txt" for quick information about most common operations.
+
+
+    ---------------------------------------------------------------------------------------------------------------------------
+    Glossary
+    ---------------------------------------------------------------------------------------------------------------------------
+    
+    With reference to Fig. 5 of "howto-eth-boards-fundamentals.txt", we use the terms eLoader, eUpdater and eApplication to 
+    refer the process running on partitions-0, -1, and -2 of a generic ETH board. A special eApplication is the 
+    eApplPROGupdater which runs in partition-2 and is exclusively dedicated to the programming of partition-1.
+     
+    The names of the eLoader and eUpdater for the various ETH boards are: emsLoader, emsUpdater, mc4plusLoader, mc4plusUpdater,    
+    mc2plusLoader, mc2plusUpdater. The names of the eApplication for the various boards are ... many. 
+    Typically we have ems.hex, mc4plus.hex etc. 
+
+    In the following, we refer to the EMS board. For other boards the procedure is the same, but the names and the directories 
+    change accordingly.
+
+
+
+    ---------------------------------------------------------------------------------------------------------------------------
+    (1) First time preparation of the EMS board.
+    ---------------------------------------------------------------------------------------------------------------------------
+
+    Here is described how production operates before the EMS board can be mounted on the robot. When on the robot, the board
+    can be fully managed by network operations by means of the FirmwareUpdater program.
+    
+
+    (1).a Burning the eLoader and eUpdater
+    
+    You must have an EMS board connected to a power supply and to a ULINKpro programming device (http://www.keil.com/ulinkpro).
+    Then you follow instructions in EMS/scripts/readme.txt to launch scripts which: erase FLASH and EEPROM, burn the eLoader 
+    into partition-0 and burn the eUpdater into partition-1 of the FLASH.
+
+    
+    (1).b Detection of the board with FirmwareUpdater 
+    
+    After the above operations, the FW of the EMS board can be updated via Ethernet using the FirmwareUpdater program.     
+    You must attach the ETH cable to the EMS, connect it to a host with address 10.0.1.104 and launch:
+    > FirmwareUpdater --admin
+    The `--admin` option adds some extra features for advanced users.
+    The FirmwareUpdater will search for its initialisation file, called firmwareupdater.ini, and will show the devices inside 
+    it. Each robot has its own .ini file which can be found in repository robots-configuration.
+    Select the ETH<> device and click the `Discover` button. It will find the EMS board at the default address 10.0.1.99.
+    You must tick the board and press the `Force ETH Maintenance` button. You can check if the board is in maintenance status:
+    -   either by looking at the left panel called `Board Properties` where variable Status must be labeled `maintenance`, 
+    -   or by checking on the right part of the GUI that the board runs the eUpdater process.
+
+    
+    (1).c Change of the default address
+    
+    When the board is in maintenance status you can change the default address into the chosen one (e.g., 10.0.0.1). 
+    You do that by ticking the board and by pressing the `Change IP Address` button.
+    
+    
+    (1).d Assigning a meaningful Info field
+    
+    It is advisable to edit the Info field of the EMS board so that it is easily recognisable when mounted on the robot.  
+    When the board is in maintenance, select the board, press the `Change Info` button and write a string of up to 
+    31 characters.
+    
+
+    (1).e Programming the application for the first time
+    
+    It is now time to program the application. 
+    When the board is in maintenance, select the board, press the `Upload Application` button, load the relevant binary 
+    file (e.g., ems.hex from  the EMS/bin/application/ folder). 
+  
+  
+    (1).f Making the eApplication the default process
+    
+    You also need to force the eApplication to have the DEF property. It means that after the 5 seconds of bootstrap the EMS 
+    will execute the application. The standard behaviour after step (1).a is that after the 5 seconds the EMS still executes 
+    the eUpdater. The reason is that  no application may have been programmed yet and we don't allow a jump to un-initialised 
+    CODE space. Do that by pressing the `Set Def Boot eApplication` button. You can verify the success of the operation by 
+    looking at the at the right panel called "Board Properties" and by checking in "Bootstrap Processes" that the Default is 
+    eApplication. The ultimate test is however done in this way: press button `Force ETH Application` and wait to see in the 
+    left panel called `Board Properties` that the EMS is now in Status application. 
+    
+    
+    After all these operations the EMS can be safely mounted on the robot.
+        
+
+    ---------------------------------------------------------------------------------------------------------------------------        
+    (2) States of the EMS board: application and maintenance
+    ---------------------------------------------------------------------------------------------------------------------------
+
+    In 5 seconds after boostrap, the EMS board will execute the Default process, which should always be the eApplication. 
+    If not, read section (1).f.
+    
+    In the application state, one can safely launch yarprobotinterface.
+       
+    When we launch FirmwareUpdater and we do a discovery on the ETH<> device, the boards underneath will maintain their status. 
+    One can just read information about their status and then quit FirmwareUpdater.
+
+    
+    If however, one wants to make operations on the EMS boards, he/she must put one or more EMS boards in maintenance status and
+    when finished he/she must retsore the application status. Here are details on how to do it.
+
+    
+    (2).a Force the maintenance status
+    
+    After you have launched FirmwareUpdater, selected the ETH<> device, pressed the `Discover` button, you can send in 
+    maintenance mode one or more boards of the same kind by ticking them and by pressing the "Force ETH Maintenance" button.
+    You can check that the boards are in maintenance by reading their status on the right panel called `Board Properties`. 
+    
+    
+    (2).b Force the application status
+    
+    After you have launched FirmwareUpdater, selected the ETH<> device, pressed the `Discover` button, you can send in 
+    application mode one or more boards of the same kind by ticking them and by pressing the "Force ETH Application" button.
+    You can check that the boards are in maintenance by reading their status on the right panel called `Board Properties`. 
+    As an alternative: you exit FirmwareUpdater, power motors off and on again, wait a total of 15 seconds (add extra 20-30
+    seconds if the robot has batteries on its back).     
+ 
+ 
+    ---------------------------------------------------------------------------------------------------------------------------    
+    (3) Check and update of the application FW of the EMS board
+    ---------------------------------------------------------------------------------------------------------------------------
+    
+    The application firmware EMS/bin/application/ems.hex is likely to change often in the life of the robot, hence here is 
+    described how to check if a new FW version is available and how to perform the FW update.
+   
+   
+    (3).a Verify current FW version
+   
+    You can verify which FW version the robot is running by launching a discovery procedure on the ETH<> device with 
+    FirmwareUpdater. The GUI will show the version, date and build date of the running process. If nothing is shown on the left
+    part of the GUI (that may happen if the EMS firmware is very old), something will be shown in the right panel called 
+    `Board Properties`.
+
+    
+    (3).b Find latest available FW version
+    
+    You can see what is the latest available FW version of the EMS by running the following commands:
+    -   make sure the repository is updated:
+        ..../icub-firmware-build> git pull --rebase
+    -   read the log of ems.hex file
+        ..../icub-firmware-build> git log --follow ETH/EMS/bin/application/ems.hex
+      
+    If the FW version on the EMS board is older than the one in repository then an update is recommended.
+ 
+ 
+    (3).c Programming the application FW 
+    
+    To program the application FW you can operate as follows:
+    -   send the board(s) in maintenance, as descrived in point (2).a,
+    -   select the board(s), press the `Upload Application` button, load the relevant binary file (e.g., ems.hex from 
+        the EMS/bin/application/ folder),
+    -   verify that the current version is now aligned to latest available,   
+    -   send back the board(s) in application status, as described in point (2).b.     
+        
+    
+    ---------------------------------------------------------------------------------------------------------------------------
+    (4) Check and update of the CAN boards connected to the EMS board
+    ---------------------------------------------------------------------------------------------------------------------------
+    
+    The EMS board can have CAN boards attached to one of its CAN buses. The EMS has two CAN buses, the MC4PLUS has one bus, 
+    the MC2PLUS does not have any. The FW update of such CAN boards can be done at PC104 level (icub-head in some robots) 
+    using the FirmwareUpdater program.
+    
+    To operate on CAN boards, at first you have to put the EMS board in maintenance and then launch a discovery on the EMS. 
+    The program will find all the CAN boards beneath and will print all relevant information.
+
+    Here are the steps to follow:
+    -   launch the FirmwareUpdater, discover on the ETH<> device, select the relevant EMS board, press the 
+        `Force ETH Maintenance` button.
+    -   highlight the EMS board, press the `Discover` button.            
+    -   if there are CAN boards then the GUI will show them, together with their associated information.
+    
+    
+    To update the FW on one or more CAN boards of the same type you just need to select them and press the 
+    `Upload Application` button.
+    
+    
+    To change the Info field of one board, you select it and press the `Change Info` button.
+    
+    To change the CAN address, you must have launched the FirmwareUpdater with the "--admin" option,
+    then you must select the board and operate with the `Change CAN address` button. 
+    
+    
+    
+    After all operations, if you want to use the robot you need to send back the ETH board(s) in application status, 
+    as described in point (2).b. 
+    
+
+    
+    ---------------------------------------------------------------------------------------------------------------------------     
+    (5) Advanced operation: update of the loader FW in EMS boards  
+    ---------------------------------------------------------------------------------------------------------------------------
+    
+    You can update also the loader FW in the partition-0, even if you need to do so very rarely.
+    
+    You must be very careful and load the correct FW, otherwise you risk to lose ETH communication for the board.
+    Read section (7).b before you proceed.  
+   
+    Also you must be careful to update only one board at a time because the board may change its address into 10.0.1.99. 
+    The reason is that the eLoader always checks the validity of the core part of the EEPROM and if what reads is 
+    not what expected, it resets it to the expected default values: IP = 10.0.1.99, properties DEF START RUNNING all assigned 
+    to eUpdater.
+   
+    Moreover, typically one needs to update both the eLoader and the eUpdater. In such a case you MUST operate with one board 
+    at a time: 
+    -   first update the eLoader following instructions in this section, 
+    -   then update the eUpdater of the same board following instructions on the relevant section.
+      
+   
+    You can update the FW of the loader in partition-0 by following these steps
+    -   Launch the FirmwareUpdater with the `--admin` option and send the board in maintenance as described in section (2).a.
+    -   Select only this single board (IT IS VERY IMPORTANT!!), click the button `Upload eLoader` to load the file 
+        EMS/bin/environment/emsLoader.hex.
+    -   Verify that the new eLoader is correctly programmed. IT IS VERY IMPORTANT!! that:
+        - you perform a new discovery on the ETH<> device to be sure that the GUI retrieves the lastest info from the board,
+        - that you verify that the right panel called `Board Properties` shows the correct values for FW Version, 
+          Date, Built On. 
+    -   If not .... read section (7).b and reprogram the board with the correct FW.
+    -   After you are sure the eLoader is correct, select the board, click the button `Restart ETH Board(s)` and 
+        launch a new discovery on the ETH<> device.
+    -   In case the address has changed to 10.0.1.99, just change it to its original address operating with button 
+        `Change IP Address`, as described in (1).c.
+    -   If the eApplication is not the default process, operate as in (1).f to make it the default.   
+        
+    After all operations, if you want to use the robot operate as in section (2).b to send the boards back in application mode.
+    However, it is probable that you want to update the eUpdater as well, hence ... read following section.
+        
+    
+    ---------------------------------------------------------------------------------------------------------------------------    
+    (6) Advanced operation: update of the updater FW in EMS boards  
+    ---------------------------------------------------------------------------------------------------------------------------
+   
+    The eUpdater is a complex program which uses UDP communication to talk to the ethLoader, to the canLoader, and more 
+    recently also to the FirmwareUpdater (which uses a new protocol version). Hence, it may need some changes in its lifetime.
+    
+    You must be very careful when doing this operation. Read section (7).c before you proceed.  
+   
+    You can update the FW of the eUpdater in partition-1 by following these steps
+    -   Launch the FirmwareUpdater with the `--admin` option and send the board in maintenance as described in section (2).a.
+    -   Program the special application EMS/bin/environment/emsApplPROGupdater.hex
+    -   Select the board, click the button `Restart ETH Board(s)`, wait for at least 5 seconds and then launch a new discovery 
+        on the ETH<> device. The GUI will show that the executing process is `eApplPROGupdater`.
+    -   Load the new EMS/bin/environment/emsUpdater.hex with the button `Upload eUpdater`.
+    -   Now verify that the new updater can safely execute by clicking `Jump to eUpdater` and then launch a new discovery 
+        on the ETH<> device. The GUI must show the new updater running. 
+        -   If not, it means that something went wrong. Maybe you programmed a wrong binary. Please take a printscreen and
+            proceed as in section (7).c.
+        -   If yes, go on.          
+    -   At this point, push button `Set Def Boot eUpdater` and verify its effect. A new discovery will show that now the board
+        has Startup, Default, and Running processed all set to value eUpdater (see the right panel called `Board Properties`, 
+        group `Bootstrap Processes`). 
+    -   Now you must program the application and make it the DEF process. At first, restart the board with the 
+        `Restart ETH Board(s)` button, launch a new discover, and then operate as in (1).e and (1).f: program the application 
+        with button `Upload Application` using the EMS/bin/application/ems.hex file, click `Set Def Boot eApplication` button, 
+        verify again the group `Bootstrap Processes`.
+
+
+              
+    After all operations, if you want to use the robot operate as in section (2).b to send the boards back in application mode.
+
+
+     
+    ---------------------------------------------------------------------------------------------------------------------------    
+    (7) Advanced operation: recover an EMS board to which was uploaded a wrong FW.    
+    ---------------------------------------------------------------------------------------------------------------------------
+       
+    The eUpdater / eApplPROGupdater have mechanisms which prevent most damages done by a wrong FW update operation. 
+    -   The program stops operations as soon as it detects a received code portion which is outside of the valid range of
+        the specified partition.
+    -   The program waits to erase FLASH until has filled its buffer with some valid code and time has come to write it in 
+        FLASH.
+    
+    Hence, if one accidentaly loads an eLoader or and eUpdater binary when he/she has pressed `Upload Application`, nothing 
+    bad happens because FLASH is not even erased. 
+    
+    No damage is done also if one accidentaly loads an eApplication or and eUpdater binary when he/she has pressed 
+    `Upload eLoader`.
+
+    However, there are other cases where something happens and we must recover. 
+    
+    
+    (7).a   Recovery from a wrongly programmed eApplication       
+           
+    One may accidentaly load the wrong application (e.g., the mc4plus.hex file onto a EMS board). In such a case,
+    the application is likely to crash when it is executed 5 seconds after its restart.  
+    
+    The same applies if during the FW update one accidentaly turns power off or if a cable is accidentaly unplugged.
+
+    What you have to do in such cases is to launch a discovery on the ETH<> device just after power ON to catch the EMS 
+    board in the eUpdater before it jumps to eApplication which causes the board crash.
+    
+    Here are the correct steps:
+    -   Launch FirmwareUpdater.
+    -   Power motors off, power motor on, waits just half a second, click `Discover` button on the ETH<> device.
+    -   You will find the boards in maintenance. 
+    -   Upload the correct FW.    
+    
+
+    (7).b   Recovery from a wrongly programmed eLoader       
+    
+    The programming of the eLoader is very critical. The eUpdater uses extra safety features for the programmimg of
+    the eLoader which prevents damage in case of accidental power off and packet loss. The full image of the eLoader 
+    is stored in RAM and FLASH is erased and programmed only when the full image has arrived and is considered valid.
+
+    The only danger is in the few milliseconds between the FLASH erase and the programming. 
+    
+    However, if one accidentaly burns in FLASH a wrong eLoader (e.g., the mc4plusLoader.hex file onto an EMS board), there is
+    little that can be done:
+    
+    -   Reprogram the correct eLoader image before you turn power off or force a restart of the board.
+    -   If after a restart the board is invisible to FirmwareUpdater, remove covers of the robot, make JTAG exposed 
+        and proceed as described in section (1) of this document. Or contact icub-support.
+
+      
+    (7).b   Recovery from a wrongly programmed eUpdater       
+    
+    The programming of the eUpdater is very critical. The eApplPROGupdater uses extra safety features for the programmimg 
+    of the eUpdater which allow a safe reboot to a program surely able to talk to FirmwareUpdater.
+    When the eApplPROGupdater starts programming the FLASH with a new eUpdater, it imposes itself as the Startup and Default
+    processes. In such a way, after a reset the eLoader executes directly the eApplPROGupdater, which is the updating process
+    which is guaranteed to work.  
+    
+    If in operations descrived in section (6) something goes wrong and the EMS board does not show the correct eUpdater 
+    after a `Jump to eUpdater` command, here is what may have happened and possible recovery actions.
+
+    -   If you loaded the correct eUpdater, but during the operation a black-out happened or you cut/unplugged the 
+        ETH cable ...         
+        WHAT TO DO? Just power off and then power on the motors, launch a discovery. You will find the board again. 
+        It runs the eApplPROGupdater, which is now the DEF2RUN process. Now program again the eUpdater.hex file!        
+    -   If you loaded an eUpdater but it crashes because it is buggy, or it is the one of another board ...
+        WHAT TO DO? Just power off and then power on the motors, launch a discovery. You will find the board again. 
+        It runs the eApplPROGupdater, which is now the DEF2RUN process. Now program the correct eUpdater.hex file!     
+    -   If you attempted to load a binary with a different code space (as an eLoader or eApplication or any other misterious 
+        .hex file), then you will see running the very same eUpdater as before because our safety mechanism did not erase the 
+        FLASH ... 
+        WHAT TO DO? Just program the correct eUpdater.hex file!       
+    
+    
+
+    If you are not sure, please contact the icub-support team. 
+    
+    
+    ---------------------------------------------------------------------------------------------------------------------------    
+    (8) Advanced operation: recover a CAN board to which was uploaded a wrong FW.    
+    ---------------------------------------------------------------------------------------------------------------------------   
+   
+    The upload of a a wrong FW in CAN boards may cause a crash of the application, and hence make it invisible to 
+    FirmwareUpdater.
+        
+    What you have to do in such cases is to launch a discovery on the EMS board just after power ON to catch the CAN
+    boards in bootloader mode.  
+    
+    Here are the correct steps:
+    -   Launch FirmwareUpdater.
+    -   Perform a discovery on the ETH<> device. 
+    -   Select the target EMS board, send it in maintenance, perform a discovery under it to see the remaining boards.
+    -   Power motors off, and DO NOT refresh or perform any discovery at this stage, so that the information about
+        the EMS board in maintenance stays in the GUI.
+    -   Power motors on, waits just half a second, click `Discover` button on the EMS board.
+    -   You will find the CAN boards in bootloader mode. 
+    -   Upload the correct FW.     
+ 
+
+        
