@@ -1,0 +1,196 @@
+
+# Full details of use of FirmwareUpdater
+
+    ---------------------------------------------------------------------------------------------------------------------------
+    FirmwareUpdater
+    ---------------------------------------------------------------------------------------------------------------------------
+    
+    FirmwareUpdater joins the functions of ethLoader and canLoader in a single program. It has both GUI and command line mode
+    and it adds some extra features such as detection of the type of boards and hence more controls over accidental operations 
+    on heterogeneous boards. These new features need a recent version of eLoader and eUpdater. The programs however still runs
+    with all legacy FW versions. Refer to https://github.com/robotology/QA/issues/221 for details about what benefits the new 
+    eLoader and eUpdater give.   
+
+    To use FirmwareUpdater you must have the master release of icub-main at least dated June 2017. Also, you must install the
+    configuration files of your robot from repository robots-configuration. For this operation, please refer to documentation 
+    of the repository. The effect of installation is that the file firmwareupdater.ini is placed in the system where the yarp 
+    resource finder can find it.
+    
+    This .ini file contains a number of drivers under which the program must search for ETH and CAN boards. There are two
+    main types of drivers: ETH<> and CFW2<>. CAN-based robots have only CFW2 devices, first generation of ETH-based robots 
+    have one ETH and two CFW2 devices, most recent ETH-robots have only one ETH device. However, other CAN drivers are also 
+    supported: ECAN, PCAN, SOCKET.  
+
+    For more details of use on ETH robots, read file ETH/FirmwareUpdater.readme.maintenance.of.eth.robots.txt.
+    
+      
+    ---------------------------------------------------------------------------------------------------------------------------
+    (1) GUI mode
+    ---------------------------------------------------------------------------------------------------------------------------
+    
+    When FirmwareUpdater starts, it shows the drivers inside its .ini file. One must at first perform a discovery under these 
+    devices by highlighting the device and pressing the button `Discover` placed on the bottom right of the GUI in section 
+    `Controls`. This procedure will populate the panel on the left of the GUI with the found board. They will be CAN boards 
+    for CFW2<> drivers and ETH boards for teh ETH<> driver. When selecting a board, extra information will be displayed on the 
+    panel on the right on top. 
+    
+    The CFW2<> drivers hosts only CAN boards, whereas the ETH<> driver surely hosts ETH boards at first level but may also 
+    host CAN boards beneath one ETH board. To find the CAN boards under ETH you must first send the ETH board in maintenance 
+    status and then perform a new discovery underneath.   
+
+    It is possible to launch the FirmwareUpdater program with the "--admin" option. The effect is that the GUI shows an extra
+    set of advanced features which cna be used to perform advanced operations.
+    
+    Here are some Figures which show the layout of the GUI in several situations: when launched and after some discoveries.
+    
+    
+                                     titlebar                                                  
+  --- board area                        |                                           toolbar -------------------------------|
+ |                                      v                                                                                  |
+ |   ----------------------------------------------------------------------------------------------------------------      |
+ |  | x-[] FirmwareUpdater                                                                                           |     |
+ |  |----------------------------------------------------------------------------------------------------------------      |
+ |  | [v] [ ]                                                                                                        | <---|
+ |   ----------------------------------------------------------------------------------------------------------------
+ |  | Selected | Device | Board | Address | Process     | Version | Info    | Board Properties                       |
+ |  |-----------------------------------------------------------------------|   -----------------------------------  |               
+ |  | >         ETH<eth>                                                    |  | Name        Value                 | |
+ |  | >         CFW2<9>                                                     |  |-----------------------------------| |
+ |  |                                                                       |  |                                   | |
+ |  |                                                                       |  |                                   | |
+  ->|                                                                       |  |                                   | |
+    |                                                                       |  |                                   | |
+    |                                                                       |  |                                   | |
+    |                                                                       |  |                                   | |
+    |                                                                       |  |                                   | |   
+    |                                                                       |   -----------------------------------  |
+    |                                                                       |                                        |
+    |                                                                       | Controls                               |
+    |                                                                       |  [Discover] [Force ETH Maintenance]    |                   
+    |                                                                       |  [Force ETH Application] [Change Info] |
+    |                                                                       |  [Upload Application]                  |
+     ----------------------------------------------------------------------------------------------------------------
+    |  (--------)                                                                                                    |
+     ----------------------------------------------------------------------------------------------------------------
+
+    Figure 1.  The FirmwareUpdater GUI as it appears when just launched. The .ini file has two devices: one is ETH<> and 
+               the other is CFW2<> on bus 9. They are shown on the board area on the left. Under these two devices the 
+               discovery procedure will place the found boards and will print basic information such as: board type, 
+               address, running process, version, and an info string. If one highligths a board the panel Board Properties 
+               on the right fills with extra details. One board can be selected / deselected with the mouse or with the aid 
+               of the two icons in toolbar: [v] which completes the selection to all the boards of the same type, and [ ] 
+               which deselects all the boards which are selected. When one or more boards of the same type are selected the 
+               buttons under Control activate and allow to operate on them.
+               
+               
+               
+                                     titlebar                                                  
+  --- board area                        |                                           toolbar -------------------------------|
+ |                                      v                                                                                  |
+ |   ----------------------------------------------------------------------------------------------------------------      |
+ |  | x-[] FirmwareUpdater                                                                                           |     |
+ |  |----------------------------------------------------------------------------------------------------------------      |
+ |  | [v] [ ]                                                                                                        | <---|
+ |   ----------------------------------------------------------------------------------------------------------------
+ |  | Selected | Device | Board | Address | Process     | Version | Info    | Board Properties                       |
+ |  |-----------------------------------------------------------------------|   -----------------------------------  |               
+ |  | >         ETH<eth>                                                    |  | Name        Value                 | |
+ |  | >         CFW2<9>                                                     |  |-----------------------------------| |
+ |  |                                                                       |  |                                   | |
+ |  |                                                                       |  |                                   | |
+  ->|                                                                       |  |                                   | |
+    |                                                                       |  |                                   | |
+    |                                                                       |  |                                   | |
+    |                                                                       |  |                                   | |
+    |                                                                       |  |                                   | |   
+    |                                                                       |   -----------------------------------  |
+    |                                                                       |                                        |
+    |                                                                       | Controls                               |
+    |                                                                       |  [Discover] [Force ETH Maintenance]    | 
+    |                                                                       |  [Force ETH Application] [Change Info] |
+    |                                                                       |  [Upload Application]                  |
+    |                                                                       |                                        |
+    |                                                                       | Advanced Controls                      |
+    |                                                                       |  [Change IP Address] [Restart ETH b..] | 
+    |                                                                       |  [Blink ETH Board] [Upload eLoader]    |
+    |                                                                       |  [Upload eUpdater] [Jump to eUpdater]  |    
+    |                                                                       |  [Set Def Boot eApplication]           |
+    |                                                                       |  [Set Def Boot eUpdater] [Erase ETH..] |
+    |                                                                       |  [Change CAN address] [Calibrate STR.] |
+    |                                                                       |  [ ] Erase STRAIN EEPROM               |
+    ----------------------------------------------------------------------------------------------------------------
+    |  (--------)                                                                                                    |
+     ----------------------------------------------------------------------------------------------------------------
+
+    Figure 2.  The FirmwareUpdater GUI as it appears when launched with "--admim". The Advanced Controls buttons which
+               are now made visible allow for expert operations.    
+               
+        
+     
+     ----------------------------------------------------------------------------------------------------------------       
+    | x-[] FirmwareUpdater                                                                                           |      
+    |----------------------------------------------------------------------------------------------------------------       
+    | [v] [ ]                                                                                                        |  
+     ----------------------------------------------------------------------------------------------------------------
+    | Selected | Device | Board | Address | Process     | Version | Info    | Board Properties                       |
+    |-----------------------------------------------------------------------|   -----------------------------------  |               
+    | v         ETH<eth>                                                    |  | Name        Value                 | |
+    |    >[ ]            mc4plus 10.0.1.20 eApplication  3.0       head     |  |-----------------------------------| |
+    |    >[ ]            ems4    10.0.1.1  eApplication  3.1       left-arm |  | ETH board                         | |
+    |    v[ ]            ems4    10.0.1.3  eUpdater      2.3       right-arm|  |   Type      ems                   | |
+    |                    foc     CAN1:1    canApplicat.. 2.2.0              |  |   MAC       02-00-00-6D-38-4F     | |
+    |                    foc     CAN1:2    canApplicat.. 2.2.0              |  |   IP        10.0.1.3              | |
+    |                    foc     CAN1:3    canApplicat.. 2.2.0              |  |   status    maintenance           | |
+    |                    foc     CAN1:4    canApplicat.. 2.2.0              |  | Bootstrap Processes               | |
+    |                    strain  CAN2:1    canApplicat.. 1.5.1              |  | ...                               | |    
+    |    v[ ]            mc4plus 10.0.1.21 eUpdater      2.3       face     |   -----------------------------------  |
+    |                    ?                                                  |                                        |    
+    |    >[ ]            unknown 10.0.1.7  eUpdater      1.0       N/A      |                                        |
+    | v         CFW2<9>                                                     |                                        |
+    |                    mtb     CAN9:1    canApplicat.. 1.16.0    on chest | Controls                               |
+    |                    mtb     CAN9:2    canApplicat.. 1.16.0    on chest |  [Discover] [Force ETH Maintenance]    |
+    |                                                                       |  [Force ETH Application] [Change Info] |
+    |                                                                       |  [Upload Application]                  |
+     ----------------------------------------------------------------------------------------------------------------
+    |  (--------) Operation Done                                                                                     |
+     ----------------------------------------------------------------------------------------------------------------
+     
+
+    Figure 3.  The FirmwareUpdater GUI as it appears after some discoveries. On ETH<> there are 5 ETH boards. One of
+               them, and ems4 with address 10.0.1.3 is highlighted and shows further details in Board Properties.
+               A previous discovery under it found some CAN boards. A discovery under the mc4plus at 10.0.1.21 instead 
+               did not find any CAN board. One ETH board, the 10.0.1.7 is labeled unknown and with N/A Info because it 
+               has an old version of the eUpdater which does not transmit the Board and Info fields. Finally, the
+               discovery under CFW2>9> has found two CAN boards.               
+    
+
+    
+    ---------------------------------------------------------------------------------------------------------------------------
+    (2) Command line mode
+    ---------------------------------------------------------------------------------------------------------------------------
+     
+    This mode can be used inside a bash script to perform automatic and not-interactive FW update of the complete robot.
+    
+    In the following we just report some example of command line usage. These commands shall soon be grouped inside
+    a script which will be able to perform automatic update of your robot. The creation and test of those scripts is WIP.
+    
+    Example of programming the application FW of the EMS board @ 10.0.1.1:
+    
+    > FirmwareUpdater --nogui --verbosity 0 –-force-eth-maintenance --device ETH --id eth0 --eth_board 10.0.1.1
+    > FirmwareUpdater --nogui --verbosity 0 --program --device ETH --id eth0 --eth_board 10.0.1.1 --file ems.hex
+    > FirmwareUpdater --nogui --verbosity 0 –-force-eth-application --device ETH --id eth0 --eth_board 10.0.1.1
+    
+    Example of programming the application FW of a 2FOC board w/ CAN1:3 beneath the EMS board @ 10.0.1.1:
+    
+    > FirmwareUpdater --nogui --verbosity 0 –-force-eth-maintenance --device ETH --id eth0 --eth_board 10.0.1.1
+    > FirmwareUpdater --nogui --verbosity 0 --program --device ETH --id eth0 --eth_board 10.0.1.1 --can_line 1 --can_id 3 --file 2FOC.hex
+    > FirmwareUpdater --nogui --verbosity 0 –-force-eth-application --device ETH --id eth0 --eth_board 10.0.1.1   
+
+    
+    Example of programming the application FW of a MTB board on CFW2<9> and ID 3:
+    
+    > FirmwareUpdater --nogui --verbosity 0 --program --device CFW2_CAN --id 9 --can_line 9 --can_id 3 --file skin.hex
+    
+    
+    
+    
