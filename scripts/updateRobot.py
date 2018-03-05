@@ -18,29 +18,31 @@
 # Public License for more details
 
 
-import os
+# description:
+# this script is a front-end for the FirmwareUpdater program in non GUI mode. it performs automatic firmware updates on robots.
 
-# it retrieves arguments, such as ... TBD
-def getopts(argv):
-    opts = {}
-    while argv:
-        if argv[0][0] == '-':
-            opts[argv[0]] = argv[1]
-            argv = argv[2:]
-        else:
-            argv = argv[1:]
-    return opts
+import os
 
 
 # it retrieves properties of a given board
-def get_board_properties(brdtype):
+def get_board_properties(boardroot, brdtype):
     prop = {}
-    prptree = ET.parse('propertiesOfBoards.xml')
-    prproot = prptree.getroot()
-    for p in prproot.findall('board'):
+
+    for p in boardroot.findall('board'):
         if brdtype == p.get('type'):
             prop = p
     return prop
+
+# it retrieves the address of a board in string form
+def from_board_to_stringofaddress(brd):
+    adr = brd.find('ataddress').attrib
+    ss = adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+    return ss
+
+# it retrieves the firmwar version of a board in string form
+def from_firmware_to_stringofversion(fw):
+    ss = fw.find('version').get('major', '0') + '.' + fw.find('version').get('minor', '0') + '.' + fw.find('version').get('build', '0');
+    return ss
 
 
 # FirmwareUpdater --nogui --force-eth-maintenance --device ETH --id eth1 --eth_board $ipaddress --verbosity $verbosity
@@ -48,7 +50,7 @@ def get_board_properties(brdtype):
 # FirmwareUpdater --nogui --program --device ETH --id eth1 --eth_board $ipaddress --file ${mapofboards[$boardtag]} --verbosity $verbosity
 # FirmwareUpdater --nogui --program --device ETH --id eth1 --eth_board $ipaddress --can_line $canline --can_id $canid --file ${mapofboards[$boardtag]} --verbosity $verbosity
 
-# select what kind of fw update to do: eth, eth:can, cfw2
+# it selects what kind of fw update to do: eth, eth:can, cfw
 def do_firmware_update(brd, prp):
 
     ondevice = brd.find('ondevice').text
@@ -70,7 +72,7 @@ def do_firmware_update(brd, prp):
 
     return r
 
-
+# it perfroms fw update of cfw device
 def do_firmware_update_cfw(brd, prp):
     r = 1
     adr = brd.find('ataddress').attrib
@@ -78,6 +80,7 @@ def do_firmware_update_cfw(brd, prp):
     print 'TO BE DONE'
     return 1
 
+# it perfroms fw update of can over eth device
 def do_firmware_update_canovereth(brd, prp):
     r = 1
     adr = brd.find('ataddress').attrib
@@ -86,8 +89,11 @@ def do_firmware_update_canovereth(brd, prp):
 
     print 'step1: sending eth board in maintenance mode'
     command = 'FirmwareUpdater --nogui --force-eth-maintenance --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip') + ' --verbosity 0'
-    print command 
-    r = os.system(command)
+    print command
+    if 1 == _debugmode:
+        r = 0
+    else:
+        r = os.system(command)
 
     if 0 != r:
         print 'failed sending in maintenance mode eth board @ ' + adr.get('ip') + ': quitting!'
@@ -98,7 +104,10 @@ def do_firmware_update_canovereth(brd, prp):
     tmp2 = ' --can_line ' + adr.get('canbus', '0') + ' --can_id ' + adr.get('canadr', '0') + ' --file ' + fw.find('file').text + ' --verbosity 1'
     command = tmp1 + tmp2
     print command 
-    r = os.system(command)
+    if 1 == _debugmode:
+        r = 0
+    else:
+        r = os.system(command)
 
     if 0 != r:
          print 'failed programming can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ': quitting!'
@@ -119,8 +128,11 @@ def do_firmware_update_eth(brd, prp):
 
     print 'step1: sending eth board in maintenance mode'
     command = 'FirmwareUpdater --nogui --force-eth-maintenance --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip') + ' --verbosity 0'
-    print command 
-    r = os.system(command)
+    print command
+    if 1 == _debugmode:
+        r = 0
+    else:
+        r = os.system(command)
 
     if 0 != r:
         print 'failed sending in maintenance mode eth board @ ' + adr.get('ip') + ': quitting!'
@@ -129,7 +141,10 @@ def do_firmware_update_eth(brd, prp):
     print 'step2: uploading eth firmware'
     command = 'FirmwareUpdater --nogui --program --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip') + ' --file ' + fw.find('file').text + ' --verbosity 0'
     print command 
-    r = os.system(command)
+    if 1 == _debugmode:
+        r = 0
+    else:
+        r = os.system(command)
 
     if 0 != r:
          print 'failed programming eth board @ ' + adr.get('ip') + ': quitting!'
@@ -141,44 +156,158 @@ def do_firmware_update_eth(brd, prp):
     return r
 
 
+#print 'processing: part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
+
+# it prints info about a given board
+def print_board_info(partname, brd, prp):
+    r = 0
+    adr = brd.find('ataddress').attrib
+    fw = prp.find('firmware')
+
+    print 'on part = ' + partname + ': board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', device = ' + brd.find('ondevice').text + ', address = ' + from_board_to_stringofaddress(brd) + ', firmware version = ' + from_firmware_to_stringofversion(fw)
+
+    return r
+
+
+
+# update all the boards in the xml file which are inside targetpart and are targetboard
+def update(targetpart, targetboard, robotroot, boardroot, verbose):
+
+    r = 1
+
+    print 'processing a --update request:'
+
+    for part in robotroot.findall('part'):
+        # print part.tag, part.attrib
+        if ('all' == targetpart) or (targetpart == part.get('name')):
+            #print 'processing part = ' + part.get('name')
+            for brd in part.findall('board'):
+                prp = get_board_properties(boardroot, brd.get('type'))
+
+                if ('all' == targetboard) or (targetboard == brd.get('type')):
+
+                    if 1 == verbose:
+                        print 'processing: part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
+                    # now: use brd and prp to perform fw update
+                    r = do_firmware_update(brd, prp)
+
+                    if 0 != r:
+                        print 'failure: i quit!'
+                        exit()
+                # end of: if targetboard
+            # end of: for brd
+        # end of: if targetpart
+    # end of: for part
+
+    return r
+
+# end of: def update
+
+
+# prints info of all the boards in the xml file which are inside targetpart and are targetboard
+def info(targetpart, targetboard, robotroot, boardroot, verbose):
+
+    r = 1
+
+    print 'processing a --info request:'
+
+    for part in robotroot.findall('part'):
+        # print part.tag, part.attrib
+        if ('all' == targetpart) or (targetpart == part.get('name')):
+            #print 'processing part = ' + part.get('name')
+            for brd in part.findall('board'):
+                prp = get_board_properties(boardroot, brd.get('type'))
+
+                if ('all' == targetboard) or (targetboard == brd.get('type')):
+
+                    if 1 == verbose:
+                        print 'processing: part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', device = ' + brd.find('ondevice').text + ', address = ' + from_board_to_stringofaddress(brd)
+                    # now: use brd and prp to retrieve info
+                    r = print_board_info(part.get('name'), brd, prp)
+
+                    if 0 != r:
+                        print 'failure: i quit!'
+                        exit()
+                # end of: if targetboard
+            # end of: for brd
+        # end of: if targetpart
+    # end of: for part
+
+    return r
+
+# end of: def update
 
 
 # main entrance
 if __name__ == '__main__':
-    from sys import argv
-    myargs = getopts(argv)
-    if '-i' in myargs:
-        print(myargs['-i'])
-    print(myargs)
 
-    # search for the xml file
+    import argparse
+    from argparse import RawTextHelpFormatter
+    parser = argparse.ArgumentParser(description='This script is a front-end for the FirmwareUpdater program in non GUI mode. ' +
+                                                 'It performs automatic firmware update on the whole robot, on parts of it, or even on selected board types. ' +
+                                                 'It exploits two xml files: the first is proper of the robot and contains its topology (which boards, on which driver and address), ' +
+                                                 'whereas the second is common to all robots and contains the properties and location of the .hex files.' +
+                                                 '\n' + 'Typical usage is:' + '\n' + 'python updateRobot.py -t topology.iCubGenova02.xml -f firmware.info.xml', formatter_class=RawTextHelpFormatter)
 
+    parser.add_argument("-v", "--verbose", action="store_true", default=0,
+                    help="enables output verbosity. default = 0")
+    parser.add_argument('-t', '--topology', action='store', required=True, type=argparse.FileType('r'),
+                    help='the .xml file with the description of the robot in parts and boards')
+    parser.add_argument('-f', '--firmware', action='store', required=True, type=argparse.FileType('r'),
+                    help='the .xml file with the properties of the firmware of the boards (file path, fw version, etc.)')
+    parser.add_argument('-p', '--part', action='store', required=False, default='all',
+                    choices=['all', 'head', 'l_arm', 'r_arm', 'torso', 'l_leg', 'r_leg', 'custom', 'debug'],
+                    help='the part on which to perform the action. default = all')
+    parser.add_argument('-b', '--board', action='store', required=False, default='all', 
+                    choices=['all', 'ems4', 'mc4plus', 'mc2plus', 'mtb', 'mtb4', 'strain', 'strain2', 'foc', 'mc4', 'mais', 'bll', 'dsp'],
+                    help='the board on which to perform the action. default = all')
+    parser.add_argument('-a', '--action', action='store', required=True, default='info', choices=['info', 'update'],
+                    help='the action to perform on on board(s) selected by --part and --board.')
+    parser.add_argument("-d", "--debug", action="store_true", default=0,
+                    help="enables debug mode. its use is reserved to developers and is hence undocumented. default = 0")
+
+
+    args = parser.parse_args()  
+
+    # pass parameters to program
+
+    _verbose = args.verbose
+    _filerobot = args.topology.name
+    _fileboards = args.firmware.name
+    _part = args.part
+    _board = args.board
+    _action = args.action
+    _debugmode = args.debug
+
+
+    # some warnings ...
+
+    if _debugmode:
+        print 'warning: debugmode is enabled! we cannot guaranteed correct behaviour'
+
+    if _verbose:
+        print "verbosity turned on"  
+
+
+
+
+    # open the xml files: one for robot description and one for board properties
+    
     import xml.etree.ElementTree as ET
-    brdtree = ET.parse('boardsOf.xml')
-    brdroot = brdtree.getroot()
-#    for child in brdroot:
-#        print child.tag, child.attrib
-
-    for part in brdroot.findall('part'):
-        print part.tag, part.attrib
-        for brd in part.findall('board'):
-            prp = get_board_properties(brd.get('type'))
-            # now: use brd and prp to perform fw update
-            r = do_firmware_update(brd, prp)
-
-            if 0 != r:
-                print 'failure: i quit!'
-                exit()
-
-            dev = brd.find('ondevice').text
-            adr = brd.find('ataddress').attrib            
-            fw = prp.find('firmware')
-
-            print prp.get('type'), prp.get('type'), fw.find('file').text, fw.find('version').get('major'), fw.find('version').get('minor')
-            print brd.get('type'), dev, adr.get('ip'), adr.get('canbus', '0'), adr.get('canadr', '0')
+    xmltreeOfRobot = ET.parse(_filerobot)
+    xmlrootOfRobot = xmltreeOfRobot.getroot()
+    xmltreeOfBoards = ET.parse(_fileboards)
+    xmlrootOfBoards = xmltreeOfBoards.getroot()
 
 
 
+    # so far so good: now execute the action
 
+    if _action == 'info':
+        r = info(_part, _board, xmlrootOfRobot, xmlrootOfBoards, _verbose)
+    elif _action == 'update':
+        r = update(_part, _board, xmlrootOfRobot, xmlrootOfBoards, _verbose)
+    else:
+        print 'unsupported action: ' + _action
 
 
