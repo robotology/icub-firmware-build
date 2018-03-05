@@ -9,6 +9,13 @@
         </firmware>
     </board>
 
+    <board type="mc4plus">
+        <firmware>
+            <file>../ETH/MC4PLUS/bin/application/mc4plus.hex</file>  
+            <version major='3' minor='16'/>
+        </firmware>
+    </board>
+
     <board type="mtb">
         <firmware>
             <file>../CAN/mtb/mtb.hex</file>   
