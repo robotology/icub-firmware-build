@@ -1,0 +1,197 @@
+<?xml version="1.0"?>
+
+<robot>
+
+    <part name="head">
+
+        <board type='mc4plus' name="head-eb20-j0_1">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.20" />
+        </board>
+
+        <board type='mc4plus' name="head-eb21-j2_5">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.21" />
+        </board>
+
+        <board type='mc4plus' name="face-eb22-j0_1">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.22" />
+        </board>
+
+
+    </part>
+
+    <part name="l_arm">
+
+    </part>
+
+    <part name="r_arm">
+
+    </part>
+
+    <part name="torso">
+
+        <board type='ems4' name="torso-eb5-j0_2">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.5" />
+        </board>
+
+        <board type='foc' name="foc.5.1">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.5" canbus="1" canadr="1"  />
+        </board>
+
+        <board type='foc' name="foc.5.3">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.5" canbus="1" canadr="3"  />
+        </board>
+
+        <board type='foc' name="foc.5.4">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.5" canbus="1" canadr="4"  />
+        </board>
+
+    </part>
+
+    <part name="l_leg">
+
+        <board type='ems4' name="left_leg-eb6-j0_3">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.6" />
+        </board>
+
+        <board type='ems4' name="left_leg-eb7-j4_5">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.7" />
+        </board>
+
+        <board type='ems4' name="left_leg-eb10-skin">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" />
+        </board>
+
+        <board type='foc' name="foc.6.1">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.6" canbus="1" canadr="1"  />
+        </board>
+
+        <board type='foc' name="foc.6.2">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.6" canbus="1" canadr="2"  />
+        </board>
+
+        <board type='foc' name="foc.6.3">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.6" canbus="1" canadr="3"  />
+        </board>
+
+        <board type='foc' name="foc.6.4">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.6" canbus="1" canadr="4"  />
+        </board>
+
+        <board type='foc' name="foc.7.1">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.7" canbus="1" canadr="1"  />
+        </board>
+
+        <board type='foc' name="foc.7.2">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.7" canbus="1" canadr="2"  />
+        </board>
+
+        <board type='strain2' name="strain.6">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.6" canbus="2" canadr="13"  />
+        </board>
+
+        <board type='strain2' name="strain.7">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.7" canbus="2" canadr="13"  />
+        </board>
+
+        <board type='mtb' name="mtb.10.CAN1:1">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="1" canadr="1"  />
+        </board>
+
+        <board type='mtb' name="mtb.10.CAN1:2">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="1" canadr="2"  />
+        </board>
+
+        <board type='mtb' name="mtb.10.CAN1:3">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="1" canadr="3"  />
+        </board>
+
+        <board type='mtb' name="mtb.10.CAN1:4">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="1" canadr="4"  />
+        </board>
+
+        <board type='mtb' name="mtb.10.CAN1:5">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="1" canadr="5"  />
+        </board>
+
+        <board type='mtb' name="mtb.10.CAN1:6">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="1" canadr="6"  />
+        </board>
+
+        <board type='mtb' name="mtb.10.CAN1:7">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="1" canadr="7"  />
+        </board>
+
+        <board type='mtb' name="mtb.10.CAN2:8">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="2" canadr="8"  />
+        </board>
+
+        <board type='mtb' name="mtb.10.CAN2:9">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="2" canadr="9"  />
+        </board>
+
+        <board type='mtb' name="mtb.10.CAN2:10">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="2" canadr="10"  />
+        </board>
+
+        <board type='mtb' name="mtb.10.CAN2:11">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="2" canadr="11"  />
+        </board>
+
+        <board type='mtb' name="mtb.10.CAN2:12">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="2" canadr="12"  />
+        </board>        
+    
+        <board type='mtb' name="mtb.10.CAN2:13">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.10" canbus="2" canadr="13"  />
+        </board>
+
+    </part>
+
+
+    <part name="r_leg">
+
+    </part>
+
+    <part name="custom">
+ 
+    </part>
+
+
+    <part name="debug">
+
+    </part>
+
+
+</robot>
+
