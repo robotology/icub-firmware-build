@@ -44,7 +44,7 @@ def from_board_to_stringofaddress(brd):
 
 # it retrieves the firmwar version of a board in string form
 def from_firmware_to_stringofversion(fw):
-    ss = fw.find('version').get('major', '0') + '.' + fw.find('version').get('minor', '0') + '.' + fw.find('version').get('build', '0');
+    ss = fw.find('version').get('major', '0') + '.' + fw.find('version').get('minor', '0') + '.' + fw.find('version').get('build', '0')
     return ss
 # end of: def
 
@@ -62,7 +62,7 @@ def eth_force_maintenance(brd, prp):
  
     command = 'FirmwareUpdater --nogui --force-eth-maintenance --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip') + ' --verbosity ' + str(_verbosityFU)
 
-    if _verbose > 0:
+    if _verbose > 1:
         print 'eth_force_maintenance(): sending eth board in maintenance mode w/ command:'
         print command
 
@@ -72,7 +72,7 @@ def eth_force_maintenance(brd, prp):
         r = os.system(command)
 
     if 0 != r:
-        print 'eth_force_maintenance(): failed sending in maintenance mode eth board @ ' + adr.get('ip') + ': quitting!'
+        print 'eth_force_maintenance(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
         return r   
 
     return r
@@ -87,8 +87,8 @@ def eth_force_application(brd, prp):
 
     command = 'FirmwareUpdater --nogui --force-eth-application --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip') + ' --verbosity ' + str(_verbosityFU)
  
-    if _verbose > 0:
-        print 'eth_force_application(): sending eth board in maintenance mode w/ command:'
+    if _verbose > 1:
+        print 'eth_force_application(): sending eth board in application mode w/ command:'
         print command
 
     if 1 == _debugmode:
@@ -97,7 +97,7 @@ def eth_force_application(brd, prp):
         r = os.system(command)
 
     if 0 != r:
-        print 'eth_force_application(): failed sending in application mode eth board @ ' + adr.get('ip') + ': quitting!'
+        print 'eth_force_application(): FAILURE sending in application mode eth board @ ' + adr.get('ip')
         return r   
 
     return r
@@ -105,7 +105,7 @@ def eth_force_application(brd, prp):
 
 # it decides if to go to maintenance (only eth, eth:can)
 def goto_maintenance(brd, prp):
-
+    r = 1
     ondevice = brd.find('ondevice').text
     adr = brd.find('ataddress').attrib
 
@@ -115,13 +115,14 @@ def goto_maintenance(brd, prp):
         elif 0 != adr.get('canadr', 0):
             r = eth_force_maintenance(brd, prp)
         else:
-            print 'the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported: i quit!'
-            r = 1;        
+            print 'goto_maintenance(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
+            r = 1        
     elif 'CFW' == ondevice:
-        print 'goto_maintenance(): the device ' + ondevice + ' does not need to go in maintenance mode!'   
+        print 'goto_maintenance(): WARNING the device ' + ondevice + ' does not need to go in maintenance mode!'   
+        r = 0
     else:
-        print 'goto_maintenance(): the device ' + ondevice + ' is unsupported: i quit!'
-        r = 1;
+        print 'goto_maintenance(): FAILURE the device ' + ondevice + ' is unsupported'
+        r = 1
 
     return r
 # end of: def
@@ -138,13 +139,14 @@ def goto_application(brd, prp):
         elif 0 != adr.get('canadr', 0):
             r = eth_force_application(brd, prp)
         else:
-            print 'the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported: i quit!'
-            r = 1;        
+            print 'goto_application(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
+            r = 1        
     elif 'CFW' == ondevice:
-        print 'goto_application(): the device ' + ondevice + ' does not need to go in application mode!'    
+        print 'goto_application(): WARNING the device ' + ondevice + ' does not need to go in application mode!'  
+        r = 0  
     else:
-        print 'goto_application(): the device ' + ondevice + ' is unsupported: i quit!'
-        r = 1;
+        print 'goto_application(): FAILURE the device ' + ondevice + ' is unsupported'
+        r = 1
 
     return r
 # end of: def
@@ -152,7 +154,7 @@ def goto_application(brd, prp):
 
 # it selects what kind of fw update to do: eth, eth:can, cfw
 def do_firmware_update(brd, prp):
-
+    r = 1
     ondevice = brd.find('ondevice').text
     adr = brd.find('ataddress').attrib
 
@@ -162,13 +164,13 @@ def do_firmware_update(brd, prp):
         elif 0 != adr.get('canadr', 0):
             r = do_firmware_update_canovereth(brd, prp)
         else:
-            print 'the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported: i quit!'
-            r = 1;        
+            print 'do_firmware_update(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
+            r = 1        
     elif 'CFW' == ondevice:
         r = do_firmware_update_cfw(brd, prp)
     else:
-        print 'do_firmware_update(): the device ' + ondevice + ' is unsupported: i quit!'
-        r = 1;
+        print 'do_firmware_update(): FAILURE the device ' + ondevice + ' is unsupported'
+        r = 1
 
     return r
 # end of: def
@@ -177,8 +179,8 @@ def do_firmware_update(brd, prp):
 def do_firmware_update_cfw(brd, prp):
     r = 1
     adr = brd.find('ataddress').attrib
-    print 'cfw: performing fw update on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
-    print 'TO BE DONE'
+    print 'do_firmware_update_cfw(): performing fw update on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+    print 'do_firmware_update_cfw(): FAILURE because .... python code for this  DEVICE IS not developed yet...........'
     return 1
 # end of: def
 
@@ -188,20 +190,20 @@ def do_firmware_update_canovereth(brd, prp):
     adr = brd.find('ataddress').attrib
     fw = prp.find('firmware')
     
-    if _verbose > 0:
+    if _verbose > 1:
         print 'do_firmware_update_canovereth(): performing fw update on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
 
     r = eth_force_maintenance(brd, prp)
 
     if 0 != r:
-        print 'do_firmware_update_canovereth(): failed sending in maintenance mode eth board @ ' + adr.get('ip') + ': quitting!'
+        print 'do_firmware_update_canovereth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
         return r   
 
     tmp1 = 'FirmwareUpdater --nogui --program --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip')
     tmp2 = ' --can_line ' + adr.get('canbus', '0') + ' --can_id ' + adr.get('canadr', '0') + ' --file ' + fw.find('file').text + ' --verbosity ' + str(_verbosityFU)
     command = tmp1 + tmp2
 
-    if _verbose > 0:
+    if _verbose > 1:
         print 'do_firmware_update_canovereth(): uploading can firmware w/ command:'
         print command 
 
@@ -211,11 +213,11 @@ def do_firmware_update_canovereth(brd, prp):
         r = os.system(command)
 
     if 0 != r:
-         print 'failed programming can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ': quitting!'
+         print 'do_firmware_update_canovereth(): FAILURE programming can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ': quitting!'
          return r 
 
 
-    if _verbose > 0:
+    if _verbose > 1:
         print 'do_firmware_update_canovereth(): done!'
 
     return r
@@ -228,19 +230,19 @@ def do_firmware_update_eth(brd, prp):
     adr = brd.find('ataddress').attrib
     fw = prp.find('firmware')
 
-    if _verbose > 0:
+    if _verbose > 1:
         print 'do_firmware_update_eth(): performing fw update on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
 
     r = eth_force_maintenance(brd, prp)
 
     if 0 != r:
-        print 'do_firmware_update_eth(): failed sending in maintenance mode eth board @ ' + adr.get('ip') + ': quitting!'
+        print 'do_firmware_update_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip') + ': quitting!'
         return r     
 
    
     command = 'FirmwareUpdater --nogui --program --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip') + ' --file ' + fw.find('file').text + ' --verbosity ' + str(_verbosityFU)
 
-    if _verbose > 0:
+    if _verbose > 1:
         print 'do_firmware_update_eth(): uploading eth firmware w/ command:'        
         print command 
 
@@ -250,11 +252,11 @@ def do_firmware_update_eth(brd, prp):
         r = os.system(command)
 
     if 0 != r:
-         print 'failed programming eth board @ ' + adr.get('ip') + ': quitting!'
+         print 'do_firmware_update_eth(): FAILURE programming eth board @ ' + adr.get('ip') + ': quitting!'
          return r 
 
 
-    if _verbose > 0:
+    if _verbose > 1:
         print 'do_firmware_update_eth(): done!'
 
     return r
@@ -269,7 +271,7 @@ def print_board_info(partname, brd, prp):
     adr = brd.find('ataddress').attrib
     fw = prp.find('firmware')
 
-    print 'on part = ' + partname + ': board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', device = ' + brd.find('ondevice').text + ', address = ' + from_board_to_stringofaddress(brd) + ', firmware version = ' + from_firmware_to_stringofversion(fw)
+    print 'INFO: (from xml parsing) on part = ' + partname + ': board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', device = ' + brd.find('ondevice').text + ', address = ' + from_board_to_stringofaddress(brd) + ', firmware version = ' + from_firmware_to_stringofversion(fw)
 
     return r
 # end of: def
@@ -280,7 +282,7 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
 
     r = 1
 
-    if _verbose > 0:
+    if _verbose > 1:
         print 'processing a --update request:'
 
     for part in robotroot.findall('part'):
@@ -292,14 +294,19 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
 
                 if ('all' == targetboard) or (targetboard == brd.get('type')):
 
+                    details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
                     if _verbose > 0:
-                        print 'processing: part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
-                    # now: use brd and prp to perform fw update
+                        print 'OPERATION: update() is doing fw update on: ' + details
+
                     r = do_firmware_update(brd, prp)
 
                     if 0 != r:
-                        print 'update(): has failed: i quit!'
-                        exit()
+                        print 'FAILURE: update() cannot do fw update on: ' + details
+                        print 'FAILURE: update() will attempt with other boards until completion of task'
+                        # exit()
+                    elif _verbose > 0:
+                        print 'SUCCESS: update() performed fw update on: ' + details
+
                 # end of: if targetboard
             # end of: for brd
         # end of: if targetpart
@@ -313,7 +320,7 @@ def maintenance(targetpart, targetboard, robotroot, boardroot, verbose):
 
     r = 1
 
-    if _verbose > 0:
+    if _verbose > 1:
         print 'processing a --forcemaintenance request:'
 
     for part in robotroot.findall('part'):
@@ -325,14 +332,19 @@ def maintenance(targetpart, targetboard, robotroot, boardroot, verbose):
 
                 if ('all' == targetboard) or (targetboard == brd.get('type')):
 
+                    details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
                     if _verbose > 0:
-                        print 'processing: part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
-                    # now: use brd and prp to perform fw update
+                        print 'OPERATION: maintenance() is forcing maintenance status on: ' + details                    
+                    
                     r = goto_maintenance(brd, prp)
 
                     if 0 != r:
-                        print 'maintenance(): failure: i quit!'
-                        exit()
+                        print 'FAILURE: maintenance() cannot operate with: ' + details
+                        print 'FAILURE: maintenance() will attempt with other boards until completion of task'
+                        # exit()
+                    elif _verbose > 0:
+                        print 'SUCCESS: maintenance() forced the maintenance mode on: ' + details
+
                 # end of: if targetboard
             # end of: for brd
         # end of: if targetpart
@@ -347,7 +359,7 @@ def application(targetpart, targetboard, robotroot, boardroot, verbose):
 
     r = 1
 
-    if _verbose > 0:
+    if _verbose > 1:
         print 'processing a --forceapplication request:'
 
     for part in robotroot.findall('part'):
@@ -359,14 +371,19 @@ def application(targetpart, targetboard, robotroot, boardroot, verbose):
 
                 if ('all' == targetboard) or (targetboard == brd.get('type')):
 
+                    details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
                     if _verbose > 0:
-                        print 'processing: part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
-                    # now: use brd and prp to perform fw update
+                        print 'OPERATION: application() is forcing application status on: ' + details
+ 
                     r = goto_application(brd, prp)
 
                     if 0 != r:
-                        print 'application(): failure: i quit!'
-                        exit()
+                        print 'FAILURE: application() cannot operate with: ' + details
+                        print 'FAILURE: application() will attempt with other boards until completion of task'
+                        # exit()
+                    elif _verbose > 0:
+                        print 'SUCCESS: application() forced the application mode on: ' + details
+
                 # end of: if targetboard
             # end of: for brd
         # end of: if targetpart
@@ -382,7 +399,7 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
 
     r = 1
 
-    if _verbose > 0:
+    if _verbose > 1:
         print 'processing a --info request:'
 
     for part in robotroot.findall('part'):
@@ -394,14 +411,18 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
 
                 if ('all' == targetboard) or (targetboard == brd.get('type')):
 
+                    details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
                     if _verbose > 0:
-                        print 'processing: part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', device = ' + brd.find('ondevice').text + ', address = ' + from_board_to_stringofaddress(brd)
-                    # now: use brd and prp to retrieve info
+                        print 'OPERATION: info() will parse xml for details about: ' + details
+
                     r = print_board_info(part.get('name'), brd, prp)
 
                     if 0 != r:
-                        print 'info(): failure: i quit!'
-                        exit()
+                        print 'FAILURE: info() cannot operate with: ' + details
+                        print 'FAILURE: info() will attempt with other boards until completion of task'
+                    elif _verbose > 0:
+                        print 'SUCCESS: info() retrieve details about: ' + details
+
                 # end of: if targetboard
             # end of: for brd
         # end of: if targetpart
@@ -423,8 +444,8 @@ if __name__ == '__main__':
                                                  'whereas the second is common to all robots and contains the properties and location of the .hex files.' +
                                                  '\n' + 'Typical usage is:' + '\n' + 'python updateRobot.py -t topology.iCubGenova02.xml -f firmware.info.xml', formatter_class=RawTextHelpFormatter)
 
-    parser.add_argument("-v", "--verbosity", type=int, action="store", required=False, default=1, choices=[0, 1, 2], 
-                    help="enables output verbosity. The printed output is: if 0 none, if 1 only python output, if 2 also FirmwareUpdater. default = 0")
+    parser.add_argument("-v", "--verbosity", type=int, action="store", required=False, default=1, choices=[0, 1, 2, 3], 
+                    help="enables output verbosity. The printed output is: if 0 none, if 1 only basic python output, if every python output, if 2 also FirmwareUpdater. default = 0")
     parser.add_argument('-t', '--topology', action='store', required=True, type=argparse.FileType('r'),
                     help='the .xml file with the description of the robot in parts and boards')
     parser.add_argument('-f', '--firmware', action='store', required=True, type=argparse.FileType('r'),
@@ -464,12 +485,16 @@ if __name__ == '__main__':
         _verbose = 0 
         _verbosityFU = 0
     elif 1 == _verbosity:
-        print "verbosity turned on for python only" 
+        print "verbosity turned on for basic python only" 
         _verbose = 1 
         _verbosityFU = 0
+    elif 2 == _verbosity:
+        print "verbosity turned on for full python only" 
+        _verbose = 2 
+        _verbosityFU = 0
     else: 
-        print "verbosity turned on for python and FirmwareUpdater" 
-        _verbose = 1 
+        print "verbosity turned on for full python and FirmwareUpdater" 
+        _verbose = 3 
         _verbosityFU = 1
 
 
