@@ -184,6 +184,42 @@ def do_firmware_update_cfw(brd, prp):
     return 1
 # end of: def
 
+
+# it tells how long it takes to perform fw update
+def getTimeOfFirmwareUpdate(brdtype):
+    r = 666
+
+    if brdtype == 'ems4':
+        r = 8
+    elif brdtype == 'mc4plus':
+        r = 8
+    elif brdtype == 'mc2plus':
+        r = 8
+    elif brdtype == 'foc':
+        r = 90
+    elif brdtype == 'mtb':
+        r = 90
+    elif brdtype == 'mtb4':
+        r = 270
+    elif brdtype == 'mais':
+        r = 45
+    elif brdtype == 'strain':
+        r = 60
+    elif brdtype == 'strain2':
+        r = 270
+    elif brdtype == 'mc4':
+        r = 66
+    elif brdtype == 'bll':
+        r = 66
+    elif brdtype == 'dsp':
+        r = 66
+    else:
+        r = 666
+
+    return r
+# end of: def
+
+
 # it performs fw update of can over eth device
 def do_firmware_update_canovereth(brd, prp):
     r = 1
@@ -207,11 +243,14 @@ def do_firmware_update_canovereth(brd, prp):
         print 'do_firmware_update_canovereth(): uploading can firmware w/ command:'
         print command 
 
+    if _verbose > 0:
+        boardtype = brd.get('type')
+        timeofupload = getTimeOfFirmwareUpdate(boardtype)
+        print '  - message: please be prepared to wait for some time ... fw update of a ' + boardtype + ' typically lasts ' + str(timeofupload) + ' seconds'
+
     if 1 == _debugmode:
         r = 0
     else:
-        if _verbose > 0:
-            print '.......... please be prepared to wait some minutes: fw update on a can bus lasts long time'
         r = os.system(command)
 
     if 0 != r:
@@ -481,6 +520,8 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
     countOfFailures = 0
     countOfAttempts = 0
 
+    estimatedTimeForFWupdate = 0;
+
     if _verbose > 1:
         print 'processing a --info request:'
 
@@ -507,6 +548,8 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
     
                         countOfAttempts = countOfAttempts + 1
 
+                        estimatedTimeForFWupdate = estimatedTimeForFWupdate + getTimeOfFirmwareUpdate(brd.get('type'))
+
                         if _verbose > 0:
                             print '- OPERATION #' + str(countOfAttempts)
                             print '  - type: info from xml file'
@@ -531,6 +574,13 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
 
     if _verbose > 0:
         print_result('info()', countOfFound, countOfExcluded, countOfFailures)
+        mi = estimatedTimeForFWupdate // 60
+        ho = mi // 60
+        h = ho
+        m = mi % 60
+        s = estimatedTimeForFWupdate % 60
+        print '-- Estimated time for fw update: ' + str(estimatedTimeForFWupdate) + ' seconds (' + str(h) + 'h' + str(m) + 'm' + str(s) + 's)'
+        print '--'
     # end of if ...
 
     return r
@@ -541,8 +591,8 @@ def print_result(nameOfCaller, nFound, nExcluded, nFailures):
 
     print '--'
     print '-- FINAL REPORT for ' + str(nameOfCaller) 
-    print '-- Number of boards matching your criteria (w/ --part and --board): ' + str(nFound) 
-    print '-- Number of boards excluded from the above number (w/ --excludeboard): ' + str(nExcluded)
+    print '-- Number of boards matching your criteria (w/ --part ' + _part + ' --board ' + _board + '): ' + str(nFound) 
+    print '-- Number of boards excluded from the above number (w/ --excludeboard ' + _excludedboard + '): ' + str(nExcluded)
     print '-- Number of boards for which the operation was attempted: ' + str(nFound - nExcluded)
     print '-- Number of boards for which the operation had success: ' + str(nFound - nExcluded - nFailures)
     print '-- Number of boards for which the operation failed: ' + str(nFailures)  
