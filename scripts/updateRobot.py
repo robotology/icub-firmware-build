@@ -287,6 +287,7 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
     countOfFound = 0
     countOfExcluded = 0
     countOfFailures = 0
+    countOfAttempts = 0
 
     if _verbose > 1:
         print 'processing a --update request:'
@@ -307,22 +308,26 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
                         
                         countOfExcluded = countOfExcluded + 1
                         if _verbose > 0:
-                            print 'EXCLUSION: update() will not operate on board: ' + details
+                            print '- EXCLUSION #' + str(countOfExcluded)
+                            print '  - of: ' + details
 
                     else:
 
+                        countOfAttempts = countOfAttempts + 1
+
                         if _verbose > 0:
-                            print 'OPERATION: update() is doing fw update on: ' + details
+                            print '- OPERATION #' + str(countOfAttempts)
+                            print '  - type: firmware update'
+                            print '  - target: ' + details
 
                         r = do_firmware_update(brd, prp)
 
                         if 0 != r:
                             countOfFailures = countOfFailures + 1
-                            print 'FAILURE: update() cannot do fw update on: ' + details
-                            print 'FAILURE: update() will attempt with other boards until completion of task'
+                            print '  - result: FAILURE!! (However, the operation will be attempted with other boards until completion)'
                             # exit()
                         elif _verbose > 0:
-                            print 'SUCCESS: update() performed fw update on: ' + details
+                            print '  - result: SUCCESS'
 
                     # end of: if _excl...
                 # end of: if targetboard
@@ -345,6 +350,7 @@ def maintenance(targetpart, targetboard, robotroot, boardroot, verbose):
     countOfFound = 0
     countOfExcluded = 0
     countOfFailures = 0
+    countOfAttempts = 0
 
     if _verbose > 1:
         print 'processing a --forcemaintenance request:'
@@ -365,22 +371,26 @@ def maintenance(targetpart, targetboard, robotroot, boardroot, verbose):
 
                         countOfExcluded = countOfExcluded + 1
                         if _verbose > 0:
-                            print 'EXCLUSION: maintenance() will not operate on board: ' + details
+                            print '- EXCLUSION #' + str(countOfExcluded)
+                            print '  - of: ' + details
 
                     else:
 
+                        countOfAttempts = countOfAttempts + 1
+
                         if _verbose > 0:
-                            print 'OPERATION: maintenance() is forcing maintenance status on: ' + details                    
+                            print '- OPERATION #' + str(countOfAttempts)
+                            print '  - type: force maintenance'
+                            print '  - target: ' + details                  
                         
                         r = goto_maintenance(brd, prp)
 
                         if 0 != r:
                             countOfFailures = countOfFailures + 1
-                            print 'FAILURE: maintenance() cannot operate with: ' + details
-                            print 'FAILURE: maintenance() will attempt with other boards until completion of task'
+                            print '  - result: FAILURE!! (However, the operation will be attempted with other boards until completion)'
                             # exit()
                         elif _verbose > 0:
-                            print 'SUCCESS: maintenance() forced the maintenance mode on: ' + details
+                            print '  - result: SUCCESS'
 
                     # end of: if _excl... 
                 # end of: if targetboard
@@ -404,6 +414,7 @@ def application(targetpart, targetboard, robotroot, boardroot, verbose):
     countOfFound = 0
     countOfExcluded = 0
     countOfFailures = 0
+    countOfAttempts = 0
 
     if _verbose > 1:
         print 'processing a --forceapplication request:'
@@ -424,22 +435,26 @@ def application(targetpart, targetboard, robotroot, boardroot, verbose):
 
                         countOfExcluded = countOfExcluded + 1
                         if _verbose > 0:
-                            print 'EXCLUSION: application() will not operate on board: ' + details
+                            print '- EXCLUSION #' + str(countOfExcluded)
+                            print '  - of: ' + details
 
                     else:
+                    
+                        countOfAttempts = countOfAttempts + 1
 
                         if _verbose > 0:
-                            print 'OPERATION: application() is forcing application status on: ' + details
+                            print '- OPERATION #' + str(countOfAttempts)
+                            print '  - type: force application'
+                            print '  - target: ' + details
      
                         r = goto_application(brd, prp)
 
                         if 0 != r:
                             countOfFailures = countOfFailures + 1
-                            print 'FAILURE: application() cannot operate with: ' + details
-                            print 'FAILURE: application() will attempt with other boards until completion of task'
+                            print '  - result: FAILURE!! (However, the operation will be attempted with other boards until completion)'
                             # exit()
                         elif _verbose > 0:
-                            print 'SUCCESS: application() forced the application mode on: ' + details
+                            print '  - result: SUCCESS'
 
                     # end of: if _excl... 
                 # end of: if targetboard
@@ -464,6 +479,7 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
     countOfFound = 0
     countOfExcluded = 0
     countOfFailures = 0
+    countOfAttempts = 0
 
     if _verbose > 1:
         print 'processing a --info request:'
@@ -484,21 +500,26 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
                         
                         countOfExcluded = countOfExcluded + 1
                         if _verbose > 0:
-                            print 'EXCLUSION: info() will not operate on board: ' + details
+                            print '- EXCLUSION #' + str(countOfExcluded)
+                            print '  - of: ' + details
 
                     else:
     
+                        countOfAttempts = countOfAttempts + 1
+
                         if _verbose > 0:
-                            print 'OPERATION: info() will parse xml for details about: ' + details
+                            print '- OPERATION #' + str(countOfAttempts)
+                            print '  - type: info from xml file'
+                            print '  - target: ' + details
 
                         r = print_board_info(part.get('name'), brd, prp)
 
                         if 0 != r:
                             countOfFailures = countOfFailures + 1
-                            print 'FAILURE: info() cannot operate with: ' + details
-                            print 'FAILURE: info() will attempt with other boards until completion of task'
+                            print '  - result: FAILURE!! (However, the operation will be attempted with other boards until completion)'
+                            # exit()
                         elif _verbose > 0:
-                            print 'SUCCESS: info() retrieve details about: ' + details
+                            print '  - result: SUCCESS'
 
                     # end of: if _excl...  
 
