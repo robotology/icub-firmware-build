@@ -198,7 +198,7 @@ def getTimeOfFirmwareUpdate(brdtype):
     elif brdtype == 'mc2plus':
         r = 15
     elif brdtype == 'foc':
-        r = 96
+        r = 105
     elif brdtype == 'mtb':
         r = 105
     elif brdtype == 'mtb4':
@@ -288,6 +288,11 @@ def do_firmware_update_eth(brd, prp):
     if _verbose > 1:
         print debugprefix + 'do_firmware_update_eth(): uploading eth firmware w/ command:'        
         print debugprefix + command 
+
+    if _verbose > 0:
+        boardtype = brd.get('type')
+        timeofupload = getTimeOfFirmwareUpdate(boardtype)
+        print '  - message: please be prepared to wait for some time ... fw update of a ' + boardtype + ' typically lasts ' + str(timeofupload) + ' seconds'
 
     if 1 == _debugmode:
         r = 0
