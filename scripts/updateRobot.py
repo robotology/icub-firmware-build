@@ -210,10 +210,12 @@ def do_firmware_update_canovereth(brd, prp):
     if 1 == _debugmode:
         r = 0
     else:
+        if _verbose > 0:
+            print '.......... please be prepared to wait some minutes: fw update on a can bus lasts long time'
         r = os.system(command)
 
     if 0 != r:
-         print 'do_firmware_update_canovereth(): FAILURE programming can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ': quitting!'
+         print 'do_firmware_update_canovereth(): FAILURE programming can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
          return r 
 
 
@@ -236,7 +238,7 @@ def do_firmware_update_eth(brd, prp):
     r = eth_force_maintenance(brd, prp)
 
     if 0 != r:
-        print 'do_firmware_update_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip') + ': quitting!'
+        print 'do_firmware_update_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
         return r     
 
    
@@ -252,7 +254,7 @@ def do_firmware_update_eth(brd, prp):
         r = os.system(command)
 
     if 0 != r:
-         print 'do_firmware_update_eth(): FAILURE programming eth board @ ' + adr.get('ip') + ': quitting!'
+         print 'do_firmware_update_eth(): FAILURE programming eth board @ ' + adr.get('ip')
          return r 
 
 
@@ -282,6 +284,10 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
 
     r = 1
 
+    countOfFound = 0
+    countOfExcluded = 0
+    countOfFailures = 0
+
     if _verbose > 1:
         print 'processing a --update request:'
 
@@ -293,24 +299,40 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
                 prp = get_board_properties(boardroot, brd.get('type'))
 
                 if ('all' == targetboard) or (targetboard == brd.get('type')):
-
+                
+                    countOfFound = countOfFound + 1
                     details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
-                    if _verbose > 0:
-                        print 'OPERATION: update() is doing fw update on: ' + details
 
-                    r = do_firmware_update(brd, prp)
+                    if _excludedboard == brd.get('type'):
+                        
+                        countOfExcluded = countOfExcluded + 1
+                        if _verbose > 0:
+                            print 'EXCLUSION: update() will not operate on board: ' + details
 
-                    if 0 != r:
-                        print 'FAILURE: update() cannot do fw update on: ' + details
-                        print 'FAILURE: update() will attempt with other boards until completion of task'
-                        # exit()
-                    elif _verbose > 0:
-                        print 'SUCCESS: update() performed fw update on: ' + details
+                    else:
 
+                        if _verbose > 0:
+                            print 'OPERATION: update() is doing fw update on: ' + details
+
+                        r = do_firmware_update(brd, prp)
+
+                        if 0 != r:
+                            countOfFailures = countOfFailures + 1
+                            print 'FAILURE: update() cannot do fw update on: ' + details
+                            print 'FAILURE: update() will attempt with other boards until completion of task'
+                            # exit()
+                        elif _verbose > 0:
+                            print 'SUCCESS: update() performed fw update on: ' + details
+
+                    # end of: if _excl...
                 # end of: if targetboard
             # end of: for brd
         # end of: if targetpart
     # end of: for part
+
+    if _verbose > 0:
+        print_result('update()', countOfFound, countOfExcluded, countOfFailures)
+    # end of if ...
 
     return 
 # end of: def update
@@ -319,6 +341,10 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
 def maintenance(targetpart, targetboard, robotroot, boardroot, verbose):
 
     r = 1
+
+    countOfFound = 0
+    countOfExcluded = 0
+    countOfFailures = 0
 
     if _verbose > 1:
         print 'processing a --forcemaintenance request:'
@@ -331,24 +357,40 @@ def maintenance(targetpart, targetboard, robotroot, boardroot, verbose):
                 prp = get_board_properties(boardroot, brd.get('type'))
 
                 if ('all' == targetboard) or (targetboard == brd.get('type')):
-
-                    details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
-                    if _verbose > 0:
-                        print 'OPERATION: maintenance() is forcing maintenance status on: ' + details                    
                     
-                    r = goto_maintenance(brd, prp)
+                    countOfFound = countOfFound + 1
+                    details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
 
-                    if 0 != r:
-                        print 'FAILURE: maintenance() cannot operate with: ' + details
-                        print 'FAILURE: maintenance() will attempt with other boards until completion of task'
-                        # exit()
-                    elif _verbose > 0:
-                        print 'SUCCESS: maintenance() forced the maintenance mode on: ' + details
+                    if _excludedboard == brd.get('type'):
 
+                        countOfExcluded = countOfExcluded + 1
+                        if _verbose > 0:
+                            print 'EXCLUSION: maintenance() will not operate on board: ' + details
+
+                    else:
+
+                        if _verbose > 0:
+                            print 'OPERATION: maintenance() is forcing maintenance status on: ' + details                    
+                        
+                        r = goto_maintenance(brd, prp)
+
+                        if 0 != r:
+                            countOfFailures = countOfFailures + 1
+                            print 'FAILURE: maintenance() cannot operate with: ' + details
+                            print 'FAILURE: maintenance() will attempt with other boards until completion of task'
+                            # exit()
+                        elif _verbose > 0:
+                            print 'SUCCESS: maintenance() forced the maintenance mode on: ' + details
+
+                    # end of: if _excl... 
                 # end of: if targetboard
             # end of: for brd
         # end of: if targetpart
     # end of: for part
+
+    if _verbose > 0:
+        print_result('maintenance()', countOfFound, countOfExcluded, countOfFailures)
+    # end of if ...
 
     return r
 
@@ -358,6 +400,10 @@ def maintenance(targetpart, targetboard, robotroot, boardroot, verbose):
 def application(targetpart, targetboard, robotroot, boardroot, verbose):
 
     r = 1
+
+    countOfFound = 0
+    countOfExcluded = 0
+    countOfFailures = 0
 
     if _verbose > 1:
         print 'processing a --forceapplication request:'
@@ -371,23 +417,39 @@ def application(targetpart, targetboard, robotroot, boardroot, verbose):
 
                 if ('all' == targetboard) or (targetboard == brd.get('type')):
 
+                    countOfFound = countOfFound + 1
                     details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
-                    if _verbose > 0:
-                        print 'OPERATION: application() is forcing application status on: ' + details
- 
-                    r = goto_application(brd, prp)
 
-                    if 0 != r:
-                        print 'FAILURE: application() cannot operate with: ' + details
-                        print 'FAILURE: application() will attempt with other boards until completion of task'
-                        # exit()
-                    elif _verbose > 0:
-                        print 'SUCCESS: application() forced the application mode on: ' + details
+                    if _excludedboard == brd.get('type'):
 
+                        countOfExcluded = countOfExcluded + 1
+                        if _verbose > 0:
+                            print 'EXCLUSION: application() will not operate on board: ' + details
+
+                    else:
+
+                        if _verbose > 0:
+                            print 'OPERATION: application() is forcing application status on: ' + details
+     
+                        r = goto_application(brd, prp)
+
+                        if 0 != r:
+                            countOfFailures = countOfFailures + 1
+                            print 'FAILURE: application() cannot operate with: ' + details
+                            print 'FAILURE: application() will attempt with other boards until completion of task'
+                            # exit()
+                        elif _verbose > 0:
+                            print 'SUCCESS: application() forced the application mode on: ' + details
+
+                    # end of: if _excl... 
                 # end of: if targetboard
             # end of: for brd
         # end of: if targetpart
     # end of: for part
+
+    if _verbose > 0:
+        print_result('application()', countOfFound, countOfExcluded, countOfFailures)
+    # end of if ...
 
     return r
 
@@ -398,6 +460,10 @@ def application(targetpart, targetboard, robotroot, boardroot, verbose):
 def info(targetpart, targetboard, robotroot, boardroot, verbose):
 
     r = 1
+
+    countOfFound = 0
+    countOfExcluded = 0
+    countOfFailures = 0
 
     if _verbose > 1:
         print 'processing a --info request:'
@@ -411,26 +477,57 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
 
                 if ('all' == targetboard) or (targetboard == brd.get('type')):
 
+                    countOfFound = countOfFound + 1
                     details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
-                    if _verbose > 0:
-                        print 'OPERATION: info() will parse xml for details about: ' + details
 
-                    r = print_board_info(part.get('name'), brd, prp)
+                    if _excludedboard == brd.get('type'):
+                        
+                        countOfExcluded = countOfExcluded + 1
+                        if _verbose > 0:
+                            print 'EXCLUSION: info() will not operate on board: ' + details
 
-                    if 0 != r:
-                        print 'FAILURE: info() cannot operate with: ' + details
-                        print 'FAILURE: info() will attempt with other boards until completion of task'
-                    elif _verbose > 0:
-                        print 'SUCCESS: info() retrieve details about: ' + details
+                    else:
+    
+                        if _verbose > 0:
+                            print 'OPERATION: info() will parse xml for details about: ' + details
+
+                        r = print_board_info(part.get('name'), brd, prp)
+
+                        if 0 != r:
+                            countOfFailures = countOfFailures + 1
+                            print 'FAILURE: info() cannot operate with: ' + details
+                            print 'FAILURE: info() will attempt with other boards until completion of task'
+                        elif _verbose > 0:
+                            print 'SUCCESS: info() retrieve details about: ' + details
+
+                    # end of: if _excl...  
 
                 # end of: if targetboard
             # end of: for brd
         # end of: if targetpart
     # end of: for part
 
+
+    if _verbose > 0:
+        print_result('info()', countOfFound, countOfExcluded, countOfFailures)
+    # end of if ...
+
     return r
 
-# end of: def update
+# end of: def info()
+
+def print_result(nameOfCaller, nFound, nExcluded, nFailures):
+
+    print '--'
+    print '-- FINAL REPORT for ' + str(nameOfCaller) 
+    print '-- Number of boards matching your criteria (w/ --part and --board): ' + str(nFound) 
+    print '-- Number of boards excluded from the above number (w/ --excludeboard): ' + str(nExcluded)
+    print '-- Number of boards for which the operation was attempted: ' + str(nFound - nExcluded)
+    print '-- Number of boards for which the operation had success: ' + str(nFound - nExcluded - nFailures)
+    print '-- Number of boards for which the operation failed: ' + str(nFailures)  
+    print '--'
+
+# end of: def print_result()
 
 
 # main entrance
@@ -456,6 +553,9 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--board', action='store', required=False, default='all', 
                     choices=['all', 'ems4', 'mc4plus', 'mc2plus', 'mtb', 'mtb4', 'strain', 'strain2', 'foc', 'mc4', 'mais', 'bll', 'dsp'],
                     help='the board on which to perform the action. default = all')
+    parser.add_argument('-xb', '--excludeboard', action='store', required=False, default='none', 
+                    choices=['none', 'ems4', 'mc4plus', 'mc2plus', 'mtb', 'mtb4', 'strain', 'strain2', 'foc', 'mc4', 'mais', 'bll', 'dsp'],
+                    help='exclude a board on which to perform the action. default = none')
     parser.add_argument('-a', '--action', action='store', required=True, default='info', choices=['info', 'update', 'forcemaintenance', 'forceapplication'],
                     help='the action to perform on on board(s) selected by --part and --board.')
     parser.add_argument("-d", "--debug", action="store_true", default=0,
@@ -473,6 +573,7 @@ if __name__ == '__main__':
     _board = args.board
     _action = args.action
     _debugmode = args.debug
+    _excludedboard = args.excludeboard
 
 
 
