@@ -38,11 +38,92 @@ def get_board_properties(boardroot, brdtype):
 # end of: def
 
 
+def get_string_of_fulldescriptionofboard(brd):
+
+    sss = 'board = ' + brd.get('type') + ', name = ' + brd.get('name')
+
+    if None != brd.find('version'):
+        if brd.get('required', '') == 'version':
+            version = ', required firmware version = '
+        else:
+            version = ', firmware version = '
+        targetversion = brd.find('version').attrib
+        tmajor = targetversion.get('major', '0')
+        tminor = targetversion.get('minor', '0')
+        tbuild = targetversion.get('build', '0')
+        sss = sss + version + tmajor + '.' + tminor + '.' + tbuild
+
+    sss = sss + ', device = ' + brd.find('ondevice').text + ', address = ' + from_board_to_stringofaddress(brd)
+    return sss
+# end of: def
+
+def eval_equal_or_zero(target, value):
+    if target == '0':
+        return True
+    elif target == value:
+        return True
+    else:
+        return False
+# end of: def
+
+# it retrieves properties of a given board
+def get_board_properties2(boardroot, brd):
+    prop = {}
+
+    targetbrdtype = brd.get('type')
+    findAlsoByVersion = False
+    major = 0
+    minor = 0
+    build = 0
+    if brd.get('required', '') == 'version':
+        findAlsoByVersion = True       
+        if None == brd.find('version'):
+            print pyprefix + errorprefix + 'syntax error in the xml robot topology: cannot find tag <version> as indicated by <board type= .... required="version">'  
+            print pyprefix + errorprefix + 'i will not consider this board. please rewrite the xml file.'
+            return prop
+        targetversion = brd.find('version').attrib
+        tmajor = targetversion.get('major', '0')
+        tminor = targetversion.get('minor', '0')
+        tbuild = targetversion.get('build', '0')
+    elif brd.get('required', '') != '':
+        print pyprefix + errorprefix + 'syntax error in the xml robot topology: <board type= .... required="' + brd.get('required') +'"> is not allowed. if required is present, it can be only: ="version"'
+        print pyprefix + errorprefix + 'i will not consider this board. please rewrite the xml file.'
+        return prop
+
+    for p in boardroot.findall('board'):
+        if targetbrdtype == p.get('type'):
+            if findAlsoByVersion == False:
+                prop = p
+                break
+            else:
+                # must match also the major.mino.build etc.
+                fw = p.find('firmware')
+                ma = fw.find('version').get('major', '0')
+                mi = fw.find('version').get('minor', '0')
+                bu = fw.find('version').get('build', '0')
+                if (True == eval_equal_or_zero(tmajor, ma)) and (True == eval_equal_or_zero(tminor, mi)) and (True == eval_equal_or_zero(tbuild, bu)):
+                    prop = p
+                    break 
+        
+    return prop
+# end of: def
+
+
 # it retrieves the address of a board in string form
 def from_board_to_stringofaddress(brd):
     adr = brd.find('ataddress').attrib
     ss = adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
     return ss
+# end of: def
+
+# it retrieves the address of a board in string form
+def from_board_to_stringofrequiredversion(brd):
+    sss = ''
+    if brd.get('required') != 'version':
+        return sss
+    ver = brd.find('version').attrib
+    sss = ver.get('major', '0') + '.' + ver.get('minor', '0') + '.' + ver.get('build', '0')
+    return sss
 # end of: def
 
 # it retrieves the firmwar version of a board in string form
@@ -314,14 +395,16 @@ def do_firmware_update_eth(brd, prp):
 
 #print pyprefix + 'processing: part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
 
-# it prints info about a given board
-def print_board_info(partname, brd, prp):
-    r = 0
-    adr = brd.find('ataddress').attrib
+def get_string_of_firmwareproperties(prp):
     fw = prp.find('firmware')
+    sss = 'available firmware version = ' + from_firmware_to_stringofversion(fw) + ', file location = ' + fw.find('file').text
+    return sss
+# end of: def
 
-    print pyprefix + '  - [INFO]  part = ' + partname + ': board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', device = ' + brd.find('ondevice').text + ', address = ' + from_board_to_stringofaddress(brd) + ', firmware version = ' + from_firmware_to_stringofversion(fw)
-
+# it prints info about a given board as found in firmware xml file
+def print_firmware_info(partname, brd, prp):
+    r = 0
+    print pyprefix + '  - [INFO]  board = ' + brd.get('type') + ', ' + get_string_of_firmwareproperties(prp)
     return r
 # end of: def
 
@@ -344,12 +427,19 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
         if ('all' == targetpart) or (targetpart == part.get('name')):
             #print pyprefix + 'processing part = ' + part.get('name')
             for brd in part.findall('board'):
-                prp = get_board_properties(boardroot, brd.get('type'))
+
+                prp = get_board_properties2(boardroot, brd)
+
+                if len(prp) == 0:
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+                    continue
 
                 if ('all' == targetboard) or (targetboard == brd.get('type')):
                 
                     countOfFound = countOfFound + 1
-                    details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
+                    # details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
+                    details = 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
 
                     if _excludedboard == brd.get('type'):
                         
@@ -366,6 +456,7 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
                             print pyprefix + '- OPERATION #' + str(countOfAttempts)
                             print pyprefix + '  - type: firmware update'
                             print pyprefix + '  - target: ' + details
+                            print pyprefix + '  - using:  ' + get_string_of_firmwareproperties(prp)
 
                         r = do_firmware_update(brd, prp)
 
@@ -407,12 +498,19 @@ def maintenance(targetpart, targetboard, robotroot, boardroot, verbose):
         if ('all' == targetpart) or (targetpart == part.get('name')):
             #print pyprefix + 'processing part = ' + part.get('name')
             for brd in part.findall('board'):
-                prp = get_board_properties(boardroot, brd.get('type'))
+
+                prp = get_board_properties2(boardroot, brd)
+
+                if len(prp) == 0:
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+                    continue
 
                 if ('all' == targetboard) or (targetboard == brd.get('type')):
                     
                     countOfFound = countOfFound + 1
-                    details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
+                    # details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
+                    details = 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
 
                     if _excludedboard == brd.get('type'):
 
@@ -471,12 +569,19 @@ def application(targetpart, targetboard, robotroot, boardroot, verbose):
         if ('all' == targetpart) or (targetpart == part.get('name')):
             #print pyprefix + 'processing part = ' + part.get('name')
             for brd in part.findall('board'):
-                prp = get_board_properties(boardroot, brd.get('type'))
+
+                prp = get_board_properties2(boardroot, brd)
+
+                if len(prp) == 0:
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+                    continue
 
                 if ('all' == targetboard) or (targetboard == brd.get('type')):
 
                     countOfFound = countOfFound + 1
-                    details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
+                    # details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
+                    details = 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
 
                     if _excludedboard == brd.get('type'):
 
@@ -538,13 +643,20 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
         if ('all' == targetpart) or (targetpart == part.get('name')):
             #print pyprefix + 'processing part = ' + part.get('name')
             for brd in part.findall('board'):
-                prp = get_board_properties(boardroot, brd.get('type'))
+
+                prp = get_board_properties2(boardroot, brd)
+
+                if len(prp) == 0:
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+                    continue
 
                 if ('all' == targetboard) or (targetboard == brd.get('type')):
 
                     countOfFound = countOfFound + 1
-                    details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
 
+                    details = 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+ 
                     if _excludedboard == brd.get('type'):
                         
                         countOfExcluded = countOfExcluded + 1
@@ -563,7 +675,7 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
                             print pyprefix + '  - type: info from xml file'
                             print pyprefix + '  - target: ' + details
 
-                        r = print_board_info(part.get('name'), brd, prp)
+                        r = print_firmware_info(part.get('name'), brd, prp)
 
                         if 0 != r:
                             countOfFailures = countOfFailures + 1
