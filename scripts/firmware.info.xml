@@ -51,4 +51,27 @@
         </firmware>
     </board>
 
+
+    <board type="mc4">
+        <firmware>
+            <file>../CAN/4dc/4DC.2.19.out.S</file>   
+            <version major='2' minor='25' build='87'/>
+        </firmware>
+    </board>
+
+    <board type="mc4">
+        <firmware>
+            <file>../CAN/4dc/4DC.2.28.out.S</file>   
+            <version major='2' minor='40' build='87'/>
+        </firmware>
+    </board>
+
+    <board type="mc4">
+        <firmware>
+            <file>../CAN/4dc/4DC.2.30.out.S</file>   
+            <version major='2' minor='48' build='87'/>
+        </firmware>
+    </board>
+
 </info>
+
