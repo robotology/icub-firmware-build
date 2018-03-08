@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+
+<robot>
+
+    <part name="head">
+
+
+
+    </part>
+
+    <part name="face">
+
+
+    </part>
+
+    <part name="left_arm">
+
+<!-- 
+
+        <board type='mc4' name="mc4.left_arm.3" required="version">
+            <version major="2" minor="25" /> 
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.2" canbus="1" canadr="3"  />
+        </board>    
+
+-->
+
+
+
+    </part>
+
+    <part name="right_arm">
+
+ 
+
+    </part>
+
+    <part name="torso">
+
+ 
+        <!-- comment: these mtb boards are on torso  -->
+
+        <board type='mtb' name="mtb.torso.CAN9:7">
+            <ondevice>CFW2</ondevice>
+            <ataddress canbus="9" canadr="7"  />
+        </board>
+
+        <board type='mtb' name="mtb.torso.CAN9:8">
+            <ondevice>CFW2</ondevice>
+            <ataddress canbus="9" canadr="8"  />
+        </board>
+
+        <board type='mtb' name="mtb.torso.CAN9:9">
+            <ondevice>CFW2</ondevice>
+            <ataddress canbus="9" canadr="9"  />
+        </board>
+
+        <board type='mtb' name="mtb.torso.CAN9:10">
+            <ondevice>CFW2</ondevice>
+            <ataddress canbus="9" canadr="10"  />
+        </board>
+
+    </part>
+
+    <part name="left_leg">
+
+ 
+
+    </part>
+
+
+    <part name="right_leg">
+
+
+
+    </part>
+
+    <part name="custom">
+ 
+    </part>
+
+
+    <part name="test">
+
+    </part>
+
+
+</robot>
+
