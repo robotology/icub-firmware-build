@@ -201,8 +201,8 @@ def goto_maintenance(brd, prp):
         else:
             print pyprefix + errorprefix + 'goto_maintenance(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
             r = 1        
-    elif 'CFW' == ondevice:
-        print pyprefix + errorprefix + 'goto_maintenance(): WARNING the device ' + ondevice + ' does not need to go in maintenance mode!'   
+    elif 'CFW2' == ondevice:
+        print pyprefix + '    [info]: boards on device ' + ondevice + ' dont need to be forced in maintenance mode!'   
         r = 0
     else:
         print pyprefix + errorprefix + 'goto_maintenance(): FAILURE the device ' + ondevice + ' is unsupported'
@@ -225,8 +225,8 @@ def goto_application(brd, prp):
         else:
             print pyprefix + errorprefix + 'goto_application(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
             r = 1        
-    elif 'CFW' == ondevice:
-        print pyprefix + errorprefix + 'goto_application(): WARNING the device ' + ondevice + ' does not need to go in application mode!'  
+    elif 'CFW2' == ondevice:
+        print pyprefix + '    [info]: boards on device ' + ondevice + ' dont need to be forced in application mode!'  
         r = 0  
     else:
         print pyprefix + errorprefix + 'goto_application(): FAILURE the device ' + ondevice + ' is unsupported'
@@ -250,7 +250,7 @@ def do_firmware_update(brd, prp):
         else:
             print pyprefix + errorprefix + 'do_firmware_update(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
             r = 1        
-    elif 'CFW' == ondevice:
+    elif 'CFW2' == ondevice:
         r = do_firmware_update_cfw(brd, prp)
     else:
         print pyprefix + errorprefix + 'do_firmware_update(): FAILURE the device ' + ondevice + ' is unsupported'
@@ -259,13 +259,43 @@ def do_firmware_update(brd, prp):
     return r
 # end of: def
 
-# it performs fw update of cfw device
+# it performs fw update of cfw device asfidanken
 def do_firmware_update_cfw(brd, prp):
     r = 1
     adr = brd.find('ataddress').attrib
-    print pyprefix + debugprefix + 'do_firmware_update_cfw(): performing fw update on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
-    print pyprefix + errorprefix + 'do_firmware_update_cfw(): FAILURE because .... python code for this  DEVICE IS not developed yet...........'
-    return 1
+    fw = prp.find('firmware')
+    
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_update_cfw(): performing fw update on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+
+
+    tmp1 = 'FirmwareUpdater --nogui --program --device CFW2 --id ' +  adr.get('canbus', '0')
+    tmp2 = ' --can_line ' + adr.get('canbus', '0') + ' --can_id ' + adr.get('canadr', '0') + ' --file ' + fw.find('file').text + ' --verbosity ' + str(_verbosityFU)
+    command = tmp1 + tmp2
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_update_cfw(): uploading can firmware w/ command:'
+        print pyprefix + debugprefix + command 
+
+    if _verbose > 0:
+        boardtype = brd.get('type')
+        timeofupload = getTimeOfFirmwareUpdate(boardtype)
+        print pyprefix + '  - message: please be prepared to wait for some time ... fw update of a ' + boardtype + ' typically lasts ' + str(timeofupload) + ' seconds'
+
+    if 1 == _debugmode:
+        r = 0
+    else:
+        r = os.system(command)
+
+    if 0 != r:
+         print pyprefix + errorprefix + 'do_firmware_update_cfw(): FAILURE programming can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         return r 
+
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_update_cfw(): done!'
+
+    return r
 # end of: def
 
 
