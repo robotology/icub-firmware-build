@@ -53,9 +53,9 @@
         <board type='mc4' name="mc4.left_arm.hand.CAN5:7" required="version">
             <version major="2" minor="48" />
             <ondevice>CFW2</ondevice>
-            <ataddress canbus="5 canadr="7"  />
+            <ataddress canbus="5" canadr="7"  />
         </board> 
-                
+                  
         <board type='strain' name="strain.left_arm.CAN1:13">
             <ondevice>CFW2</ondevice>
             <ataddress canbus="1" canadr="13"  />
@@ -100,7 +100,7 @@
             <ondevice>CFW2</ondevice>
             <ataddress canbus="7" canadr="14"  />
         </board> 
-        
+      
     </part>
 
    
