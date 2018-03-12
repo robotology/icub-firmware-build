@@ -435,6 +435,12 @@ def get_string_of_firmwareproperties(prp):
 def print_firmware_info(partname, brd, prp):
     r = 0
     print pyprefix + '  - [INFO]  board = ' + brd.get('type') + ', ' + get_string_of_firmwareproperties(prp)
+    import os.path
+    fw = prp.find('firmware')
+    fname = fw.find('file').text
+    if False == os.path.exists(fname):
+        print pyprefix + '  - [ERROR] file ' + fname + ' does not exists'
+        return 1                  
     return r
 # end of: def
 
