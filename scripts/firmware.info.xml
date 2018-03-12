@@ -50,7 +50,48 @@
             <version major='1' minor='3' build='4'/>
         </firmware>
     </board>
+           
+    <board type="mc4">
+        <firmware>
+            <file>../CAN/4dc/4DC.1.11.out.S</file>   
+            <version major='1' minor='17' build='87'/>
+        </firmware>
+    </board>
+    
+    <board type="mc4">
+        <firmware>
+            <file>../CAN/4dc/4DC.1.15.out.S</file>   
+            <version major='1' minor='21' build='87'/>
+        </firmware>
+    </board>
 
+    <board type="mc4">
+        <firmware>
+            <file>../CAN/4dc/4DC.1.19.out.S</file>   
+            <version major='1' minor='25' build='87'/>
+        </firmware>
+    </board>
+
+    <board type="mc4">
+        <firmware>
+            <file>../CAN/4dc/4DC.1.28.out.S</file>   
+            <version major='1' minor='40' build='87'/>
+        </firmware>
+    </board>
+ 
+    <board type="mc4">
+        <firmware>
+            <file>../CAN/4dc/4DC.1.30.out.S</file>   
+            <version major='1' minor='48' build='87'/>
+        </firmware>
+    </board>
+
+    <board type="mc4">
+        <firmware>
+            <file>../CAN/4dc/4DC.2.15.out.S</file>   
+            <version major='2' minor='21' build='87'/>
+        </firmware>
+    </board>    
 
     <board type="mc4">
         <firmware>
@@ -72,6 +113,55 @@
             <version major='2' minor='48' build='87'/>
         </firmware>
     </board>
+    
+    <board type="bll">
+        <firmware>
+            <file>../CAN/2bll/2BLL.1.50.out.S</file>   
+            <version major='1' minor='80' build='87'/>
+        </firmware>
+    </board>  
+    
+    <board type="bll">
+        <firmware>
+            <file>../CAN/2bll/2BLL.1.52.out.S</file>   
+            <version major='1' minor='82' build='87'/>
+        </firmware>
+    </board>  
 
+    <board type="bll">
+        <firmware>
+            <file>../CAN/2bll/2BLL.1.54.out.S</file>   
+            <version major='1' minor='84' build='87'/>
+        </firmware>
+    </board>         
+    
+    <board type="bll">
+        <firmware>
+            <file>../CAN/2bll/2BLL.1.57.out.S</file>   
+            <version major='1' minor='87' build='87'/>
+        </firmware>
+    </board>  
+
+    <board type="bll">
+        <firmware>
+            <file>../CAN/2bll/2BLLDC.1.62.out.S</file>   
+            <version major='1' minor='98' build='87'/>
+        </firmware>        
+    </board>  
+
+    <board type="bll">
+        <firmware>
+            <file>../CAN/2bll/2BLL_IE.2.51.out.S</file>   
+            <version major='2' minor='81' build='87'/>
+        </firmware>        
+    </board>          
+
+    <board type="bll">
+        <firmware>
+            <file>../CAN/2bll/2BLL_IE.2.54.out.S</file>   
+            <version major='2' minor='84' build='87'/>
+        </firmware>        
+    </board>      
+    
 </info>
 
