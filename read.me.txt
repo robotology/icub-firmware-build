@@ -1,0 +1,37 @@
+
+    ---------------------------------------------------------------------------------------------------------------------------
+    Where to find
+    ---------------------------------------------------------------------------------------------------------------------------
+    
+    -   instructions:
+        in folder docs/. 
+
+    -   firmware binaries:
+        in folders CAN/ and ETH/. the folder testing, if present, may hold temporary binaries developed for test special features.
+
+    -   firmware versions:
+        in folder info/
+
+
+    ---------------------------------------------------------------------------------------------------------------------------
+    Content of folders
+    ---------------------------------------------------------------------------------------------------------------------------
+
+    -   CAN
+        firmware binaries of all the CAN based boards (2foc, mais, strain, etc.).
+
+    -   ETH
+        firmware binaries of all the ETH based boards (ems, mc4plus, mc2plus). 
+    
+    -   docs
+        documentation.
+
+    -   info
+        the firmware versions of all binaries.
+
+    -   scripts
+        all scripts for firmware update. 
+
+    -   testing
+        all temporary binaries used for testing
+
