@@ -19,9 +19,10 @@
 
 
 # description:
-# this script is a front-end for the FirmwareUpdater program in non GUI mode. it performs automatic firmware updates on robots.
+# this script is a front-end for the FirmwareUpdater program in non GUI mode. it performs automatic firmware programs on robots.
 
 import os
+import sys
 
 pyprefix = 'PY: '
 debugprefix = '    [debug] '
@@ -126,9 +127,16 @@ def from_board_to_stringofrequiredversion(brd):
     return sss
 # end of: def
 
-# it retrieves the firmwar version of a board in string form
+# it retrieves the firmware version of a board in string form
 def from_firmware_to_stringofversion(fw):
     ss = fw.find('version').get('major', '0') + '.' + fw.find('version').get('minor', '0') + '.' + fw.find('version').get('build', '0')
+    return ss
+# end of: def
+
+
+# it retrieves the firmware version of a board in string form for ETH boards
+def from_firmware_to_stringofversionETH(fw):
+    ss = fw.find('version').get('major', '0') + '.' + fw.find('version').get('minor', '0')
     return ss
 # end of: def
 
@@ -155,6 +163,8 @@ def eth_force_maintenance(brd, prp):
     else:
         r = os.system(command)
 
+    r = r / 256
+
     if 0 != r:
         print pyprefix + errorprefix + 'eth_force_maintenance(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
         return r   
@@ -179,6 +189,8 @@ def eth_force_application(brd, prp):
         r = 0
     else:
         r = os.system(command)
+    
+    r = r / 256
 
     if 0 != r:
         print pyprefix + errorprefix + 'eth_force_application(): FAILURE sending in application mode eth board @ ' + adr.get('ip')
@@ -235,38 +247,348 @@ def goto_application(brd, prp):
     return r
 # end of: def
 
+# it performs fw verify of cfw device asfidanken
+def do_firmware_verify_cfw(brd, prp):
+    r = 2
+    adr = brd.find('ataddress').attrib
+    fw = prp.find('firmware')
+    
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_verify_cfw(): performing fw verify on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
 
-# it selects what kind of fw update to do: eth, eth:can, cfw
-def do_firmware_update(brd, prp):
+    stringOfCANfwversion = from_firmware_to_stringofversion(fw)
+    tmp1 = 'FirmwareUpdater --nogui --verify ' + stringOfCANfwversion + ' --device CFW2 --id ' +  adr.get('canbus', '0')
+    tmp2 = ' --can_line ' + adr.get('canbus', '0') + ' --can_id ' + adr.get('canadr', '0') + ' --verbosity ' + str(_verbosityFU)
+    command = tmp1 + tmp2
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_verify_cfw(): verifying can firmware w/ command:'
+        print pyprefix + debugprefix + command 
+
+    if 1 == _debugmode:
+        r = 0
+    else:
+        r = os.system(command)
+
+    r = r / 256
+
+    if 0 == r:
+        r = 0
+    elif 1 == r:
+         print pyprefix + errorprefix + 'do_firmware_verify_cfw(): TODO update FW of can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         return r 
+    else:
+         print pyprefix + errorprefix + 'do_firmware_verify_cfw(): ERROR cannot find can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         return r     
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_verify_cfw(): FW is OK!'
+
+    return r
+# end of: def
+
+
+
+# it performs fw verify of can over eth device
+def do_firmware_verify_canovereth(brd, prp):
+    r = 2
+    adr = brd.find('ataddress').attrib
+    fw = prp.find('firmware')
+    
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_verify_canovereth(): performing fw verify on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+
+    r = eth_force_maintenance(brd, prp)
+
+    if 0 != r:
+        print pyprefix + errorprefix + 'do_firmware_verify_canovereth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
+        return r   
+
+    stringOfCANfwversion = from_firmware_to_stringofversion(fw)
+    tmp1 = 'FirmwareUpdater --nogui --verify ' + stringOfCANfwversion + ' --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip')
+    tmp2 = ' --can_line ' + adr.get('canbus', '0') + ' --can_id ' + adr.get('canadr', '0') + ' --verbosity ' + str(_verbosityFU)
+    command = tmp1 + tmp2
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_verify_canovereth(): verifying can firmware w/ command:'
+        print pyprefix + debugprefix + command 
+
+
+    if 1 == _debugmode:
+        r = 0
+    else:
+        r = os.system(command)
+
+    r = r / 256
+
+    if 0 == r:
+        r = 0
+    elif 1 == r:
+         print pyprefix + errorprefix + 'do_firmware_verify_canovereth(): TODO update FW of can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         return r 
+    else:
+         print pyprefix + errorprefix + 'do_firmware_verify_canovereth(): ERROR cannot find can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         return r 
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_verify_canovereth(): FW is OK!'
+
+    return r
+# end of: def
+
+
+# it performs firmware verify by calling the external program
+def do_firmware_verify_eth(brd, prp):
+    r = 2
+    adr = brd.find('ataddress').attrib
+    fw = prp.find('firmware')
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_verify_eth(): performing fw verify on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+
+#    r = eth_force_maintenance(brd, prp)
+#
+#    if 0 != r:
+#        print pyprefix + errorprefix + 'do_firmware_verify_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
+#        return r     
+
+    stringOfETHfwversion = from_firmware_to_stringofversionETH(fw)
+    command = 'FirmwareUpdater --nogui --verify ' + stringOfETHfwversion + ' --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip') + ' --verbosity ' + str(_verbosityFU)
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_verify_eth(): verifying eth firmware w/ command:'        
+        print pyprefix + debugprefix + command 
+
+    if 1 == _debugmode:
+        r = 0
+    else:
+        r = os.system(command)
+
+    r = r / 256
+
+    if 0 == r:
+        r = 0
+    elif 1 == r:
+         print pyprefix + errorprefix + 'do_firmware_verify_eth(): TODO update FW of eth board @ ' + adr.get('ip')
+         return r 
+    else:
+         print pyprefix + errorprefix + 'do_firmware_verify_eth(): ERROR cannot find eth board @ ' + adr.get('ip')
+         return r 
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_verify_eth(): FW is the latest one!'
+
+    return r
+# end of: def
+
+
+# it selects what kind of fw verify to do: eth, eth:can, cfw
+def do_firmware_verify(brd, prp):
+    r = 2
+    ondevice = brd.find('ondevice').text
+    adr = brd.find('ataddress').attrib
+
+    if 'ETH' == ondevice:
+        if 0 == adr.get('canbus', 0):
+            r = do_firmware_verify_eth(brd, prp)
+        elif 0 != adr.get('canadr', 0):
+            r = do_firmware_verify_canovereth(brd, prp)
+        else:
+            print pyprefix + errorprefix + 'do_firmware_verify(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
+            r = 2        
+    elif 'CFW2' == ondevice:
+        r = do_firmware_verify_cfw(brd, prp)
+    else:
+        print pyprefix + errorprefix + 'do_firmware_verify(): FAILURE the device ' + ondevice + ' is unsupported'
+        r = 2
+
+    return r
+# end of: def
+
+
+# it performs fw query of cfw device asfidanken
+def do_firmware_query_cfw(brd, prp):
+    r = 2
+    adr = brd.find('ataddress').attrib
+    fw = prp.find('firmware')
+    
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_query_cfw(): performing query on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+
+    stringOfCANfwversion = from_firmware_to_stringofversion(fw)
+    tmp1 = 'FirmwareUpdater --nogui --query' + ' --device CFW2 --id ' +  adr.get('canbus', '0')
+    tmp2 = ' --can_line ' + adr.get('canbus', '0') + ' --can_id ' + adr.get('canadr', '0') + ' --verbosity ' + str(_verbosityFU)
+    command = tmp1 + tmp2
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_query_cfw(): querying can board type + firmware w/ command:'
+        print pyprefix + debugprefix + command 
+
+    if 1 == _debugmode:
+        r = 0
+    else:
+        r = os.system(command)
+
+    r = r / 256
+
+    if 0 == r:
+        r = 0
+    else:
+         print pyprefix + errorprefix + 'do_firmware_query_cfw(): ERROR cannot find can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         return r     
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_query_cfw(): board is found!'
+
+    return r
+# end of: def
+
+
+
+# it performs fw query of can over eth device
+def do_firmware_query_canovereth(brd, prp):
+    r = 2
+    adr = brd.find('ataddress').attrib
+    fw = prp.find('firmware')
+    
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_query_canovereth(): performing query on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+
+    r = eth_force_maintenance(brd, prp)
+
+    if 0 != r:
+        print pyprefix + errorprefix + 'do_firmware_query_canovereth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
+        return r   
+
+    #stringOfCANfwversion = from_firmware_to_stringofversion(fw)
+    tmp1 = 'FirmwareUpdater --nogui --query' + ' --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip')
+    tmp2 = ' --can_line ' + adr.get('canbus', '0') + ' --can_id ' + adr.get('canadr', '0') + ' --verbosity ' + str(_verbosityFU)
+    command = tmp1 + tmp2
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_query_canovereth(): querying can board + firmware w/ command:'
+        print pyprefix + debugprefix + command 
+
+
+    if 1 == _debugmode:
+        r = 0
+    else:
+        r = os.system(command)
+
+    r = r / 256
+
+    if 0 == r:
+        r = 0
+    else:
+         print pyprefix + errorprefix + 'do_firmware_query_canovereth(): ERROR cannot find can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         return r 
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_query_canovereth(): FW is OK!'
+
+    return r
+# end of: def
+
+
+# it performs firmware query by calling the external program
+def do_firmware_query_eth(brd, prp):
+    r = 2
+    adr = brd.find('ataddress').attrib
+    fw = prp.find('firmware')
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_query_eth(): performing fw query on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+
+#    r = eth_force_maintenance(brd, prp)
+#
+#    if 0 != r:
+#        print pyprefix + errorprefix + 'do_firmware_query_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
+#        return r     
+
+#    stringOfETHfwversion = from_firmware_to_stringofversionETH(fw)
+    command = 'FirmwareUpdater --nogui --query' + ' --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip') + ' --verbosity ' + str(_verbosityFU)
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_query_eth(): querying eth board + firmware w/ command:'        
+        print pyprefix + debugprefix + command 
+
+    if 1 == _debugmode:
+        r = 0
+    else:
+        r = os.system(command)
+
+    r = r / 256
+
+    if 0 == r:
+        r = 0
+    else:
+         print pyprefix + errorprefix + 'do_firmware_query_eth(): ERROR cannot find eth board @ ' + adr.get('ip')
+         return r 
+
+    if _verbose > 1:
+        print pyprefix + debugprefix + 'do_firmware_query_eth(): board found!'
+
+    return r
+# end of: def
+
+
+# it selects what kind of fw query to do: eth, eth:can, cfw
+def do_firmware_query(brd, prp):
+    r = 2
+    ondevice = brd.find('ondevice').text
+    adr = brd.find('ataddress').attrib
+
+    if 'ETH' == ondevice:
+        if 0 == adr.get('canbus', 0):
+            r = do_firmware_query_eth(brd, prp)
+        elif 0 != adr.get('canadr', 0):
+            r = do_firmware_query_canovereth(brd, prp)
+        else:
+            print pyprefix + errorprefix + 'do_firmware_query(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
+            r = 2        
+    elif 'CFW2' == ondevice:
+        r = do_firmware_query_cfw(brd, prp)
+    else:
+        print pyprefix + errorprefix + 'do_firmware_query(): FAILURE the device ' + ondevice + ' is unsupported'
+        r = 2
+
+    return r
+# end of: def
+
+
+
+
+# it selects what kind of fw program to do: eth, eth:can, cfw
+def do_firmware_program(brd, prp):
     r = 1
     ondevice = brd.find('ondevice').text
     adr = brd.find('ataddress').attrib
 
     if 'ETH' == ondevice:
         if 0 == adr.get('canbus', 0):
-            r = do_firmware_update_eth(brd, prp)
+            r = do_firmware_program_eth(brd, prp)
         elif 0 != adr.get('canadr', 0):
-            r = do_firmware_update_canovereth(brd, prp)
+            r = do_firmware_program_canovereth(brd, prp)
         else:
-            print pyprefix + errorprefix + 'do_firmware_update(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
+            print pyprefix + errorprefix + 'do_firmware_program(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
             r = 1        
     elif 'CFW2' == ondevice:
-        r = do_firmware_update_cfw(brd, prp)
+        r = do_firmware_program_cfw(brd, prp)
     else:
-        print pyprefix + errorprefix + 'do_firmware_update(): FAILURE the device ' + ondevice + ' is unsupported'
+        print pyprefix + errorprefix + 'do_firmware_program(): FAILURE the device ' + ondevice + ' is unsupported'
         r = 1
 
     return r
 # end of: def
 
-# it performs fw update of cfw device asfidanken
-def do_firmware_update_cfw(brd, prp):
+# it performs fw program of cfw device asfidanken
+def do_firmware_program_cfw(brd, prp):
     r = 1
     adr = brd.find('ataddress').attrib
     fw = prp.find('firmware')
     
     if _verbose > 1:
-        print pyprefix + debugprefix + 'do_firmware_update_cfw(): performing fw update on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+        print pyprefix + debugprefix + 'do_firmware_program_cfw(): performing fw program on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
 
 
     tmp1 = 'FirmwareUpdater --nogui --program --device CFW2 --id ' +  adr.get('canbus', '0')
@@ -274,32 +596,34 @@ def do_firmware_update_cfw(brd, prp):
     command = tmp1 + tmp2
 
     if _verbose > 1:
-        print pyprefix + debugprefix + 'do_firmware_update_cfw(): uploading can firmware w/ command:'
+        print pyprefix + debugprefix + 'do_firmware_program_cfw(): uploading can firmware w/ command:'
         print pyprefix + debugprefix + command 
 
     if _verbose > 0:
         boardtype = brd.get('type')
         timeofupload = getTimeOfFirmwareUpdate(boardtype)
-        print pyprefix + '  - message: please be prepared to wait for some time ... fw update of a ' + boardtype + ' typically lasts ' + str(timeofupload) + ' seconds'
+        print pyprefix + '  - message: please be prepared to wait for some time ... fw program of a ' + boardtype + ' typically lasts ' + str(timeofupload) + ' seconds'
 
     if 1 == _debugmode:
         r = 0
     else:
         r = os.system(command)
 
+    r = r / 256
+
     if 0 != r:
-         print pyprefix + errorprefix + 'do_firmware_update_cfw(): FAILURE programming can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         print pyprefix + errorprefix + 'do_firmware_program_cfw(): FAILURE programming can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
          return r 
 
 
     if _verbose > 1:
-        print pyprefix + debugprefix + 'do_firmware_update_cfw(): done!'
+        print pyprefix + debugprefix + 'do_firmware_program_cfw(): done!'
 
     return r
 # end of: def
 
 
-# it tells how long it takes to perform fw update
+# it tells how long it takes to perform fw program
 def getTimeOfFirmwareUpdate(brdtype):
     r = 666
 
@@ -334,19 +658,19 @@ def getTimeOfFirmwareUpdate(brdtype):
 # end of: def
 
 
-# it performs fw update of can over eth device
-def do_firmware_update_canovereth(brd, prp):
+# it performs fw program of can over eth device
+def do_firmware_program_canovereth(brd, prp):
     r = 1
     adr = brd.find('ataddress').attrib
     fw = prp.find('firmware')
     
     if _verbose > 1:
-        print pyprefix + debugprefix + 'do_firmware_update_canovereth(): performing fw update on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+        print pyprefix + debugprefix + 'do_firmware_program_canovereth(): performing fw program on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
 
     r = eth_force_maintenance(brd, prp)
 
     if 0 != r:
-        print pyprefix + errorprefix + 'do_firmware_update_canovereth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
+        print pyprefix + errorprefix + 'do_firmware_program_canovereth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
         return r   
 
     tmp1 = 'FirmwareUpdater --nogui --program --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip')
@@ -354,70 +678,74 @@ def do_firmware_update_canovereth(brd, prp):
     command = tmp1 + tmp2
 
     if _verbose > 1:
-        print pyprefix + debugprefix + 'do_firmware_update_canovereth(): uploading can firmware w/ command:'
+        print pyprefix + debugprefix + 'do_firmware_program_canovereth(): uploading can firmware w/ command:'
         print pyprefix + debugprefix + command 
 
     if _verbose > 0:
         boardtype = brd.get('type')
         timeofupload = getTimeOfFirmwareUpdate(boardtype)
-        print pyprefix + '  - message: please be prepared to wait for some time ... fw update of a ' + boardtype + ' typically lasts ' + str(timeofupload) + ' seconds'
+        print pyprefix + '  - message: please be prepared to wait for some time ... fw program of a ' + boardtype + ' typically lasts ' + str(timeofupload) + ' seconds'
 
     if 1 == _debugmode:
         r = 0
     else:
         r = os.system(command)
 
+    r = r / 256
+
     if 0 != r:
-         print pyprefix + errorprefix + 'do_firmware_update_canovereth(): FAILURE programming can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         print pyprefix + errorprefix + 'do_firmware_program_canovereth(): FAILURE programming can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
          return r 
 
 
     if _verbose > 1:
-        print pyprefix + debugprefix + 'do_firmware_update_canovereth(): done!'
+        print pyprefix + debugprefix + 'do_firmware_program_canovereth(): done!'
 
     return r
 # end of: def
 
 
-# it performs firmware update by calling the external program
-def do_firmware_update_eth(brd, prp):
+# it performs firmware program by calling the external program
+def do_firmware_program_eth(brd, prp):
     r = 1
     adr = brd.find('ataddress').attrib
     fw = prp.find('firmware')
 
     if _verbose > 1:
-        print pyprefix + debugprefix + 'do_firmware_update_eth(): performing fw update on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+        print pyprefix + debugprefix + 'do_firmware_program_eth(): performing fw program on board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
 
     r = eth_force_maintenance(brd, prp)
 
     if 0 != r:
-        print pyprefix + errorprefix + 'do_firmware_update_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
+        print pyprefix + errorprefix + 'do_firmware_program_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
         return r     
 
    
     command = 'FirmwareUpdater --nogui --program --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip') + ' --file ' + fw.find('file').text + ' --verbosity ' + str(_verbosityFU)
 
     if _verbose > 1:
-        print pyprefix + debugprefix + 'do_firmware_update_eth(): uploading eth firmware w/ command:'        
+        print pyprefix + debugprefix + 'do_firmware_program_eth(): uploading eth firmware w/ command:'        
         print pyprefix + debugprefix + command 
 
     if _verbose > 0:
         boardtype = brd.get('type')
         timeofupload = getTimeOfFirmwareUpdate(boardtype)
-        print pyprefix + '  - message: please be prepared to wait for some time ... fw update of a ' + boardtype + ' typically lasts ' + str(timeofupload) + ' seconds'
+        print pyprefix + '  - message: please be prepared to wait for some time ... fw program of a ' + boardtype + ' typically lasts ' + str(timeofupload) + ' seconds'
 
     if 1 == _debugmode:
         r = 0
     else:
         r = os.system(command)
 
+    r = r / 256
+
     if 0 != r:
-         print pyprefix + errorprefix + 'do_firmware_update_eth(): FAILURE programming eth board @ ' + adr.get('ip')
+         print pyprefix + errorprefix + 'do_firmware_program_eth(): FAILURE programming eth board @ ' + adr.get('ip')
          return r 
 
 
     if _verbose > 1:
-        print pyprefix + debugprefix + 'do_firmware_update_eth(): done!'
+        print pyprefix + debugprefix + 'do_firmware_program_eth(): done!'
 
     return r
 # end of: def
@@ -427,7 +755,7 @@ def do_firmware_update_eth(brd, prp):
 
 def get_string_of_firmwareproperties(prp):
     fw = prp.find('firmware')
-    sss = 'available firmware version = ' + from_firmware_to_stringofversion(fw) + ', file location = ' + fw.find('file').text
+    sss = 'required firmware version = ' + from_firmware_to_stringofversion(fw) + ', file location = ' + fw.find('file').text
     return sss
 # end of: def
 
@@ -439,14 +767,14 @@ def print_firmware_info(partname, brd, prp):
     fw = prp.find('firmware')
     fname = fw.find('file').text
     if False == os.path.exists(fname):
-        print pyprefix + '  - [ERROR] file ' + fname + ' does not exists'
+        print pyprefix + '  - [ERROR] file ' + fname + ' does not exist'
         return 1                  
     return r
 # end of: def
 
 
-# update all the boards in the xml file which are inside targetpart and are targetboard
-def update(targetpart, targetboard, robotroot, boardroot, verbose):
+# query fw versions of all the boards in the xml file which are inside targetpart and are targetboard
+def query(targetpart, targetboard, robotroot, boardroot, verbose):
 
     r = 1
 
@@ -456,7 +784,7 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
     countOfAttempts = 0
 
     if _verbose > 1:
-        print pyprefix + '[debug] processing a --update request:'
+        print pyprefix + '[debug] processing a --query request:'
 
     for part in robotroot.findall('part'):
         # print pyprefix + part.tag, part.attrib
@@ -490,11 +818,240 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
 
                         if _verbose > 0:
                             print pyprefix + '- OPERATION #' + str(countOfAttempts)
-                            print pyprefix + '  - type: firmware update'
+                            print pyprefix + '  - type: firmware query'
                             print pyprefix + '  - target: ' + details
                             print pyprefix + '  - using:  ' + get_string_of_firmwareproperties(prp)
 
-                        r = do_firmware_update(brd, prp)
+                        r = do_firmware_query(brd, prp)
+
+
+                        if 0 == r:
+                            if _verbose > 0:
+                                print pyprefix + '  - result: SUCCESS!! found the board'
+                        elif 1 == r:
+                            countOfFailures = countOfFailures + 1
+                            print pyprefix + '  - result: FAILURE!! the remote board cannot be found'
+                        else:
+                            countOfFailures = countOfFailures + 1
+                            print pyprefix + '  - result: FAILURE!! unknown return value from FirmwareUpdater =' + r
+
+                    # end of: if _excl...
+                # end of: if targetboard
+            # end of: for brd
+        # end of: if targetpart
+    # end of: for part
+
+    if _verbose > 0:
+        print_result('verify()', countOfFound, countOfExcluded, countOfFailures)
+    # end of if ...
+
+    return 
+# end of: def verify
+
+
+
+# verify fw versions of all the boards in the xml file which are inside targetpart and are targetboard
+def verify(targetpart, targetboard, robotroot, boardroot, verbose):
+
+    r = 1
+
+    countOfFound = 0
+    countOfExcluded = 0
+    countOfFailures = 0
+    countOfAttempts = 0
+
+    if _verbose > 1:
+        print pyprefix + '[debug] processing a --verify request:'
+
+    for part in robotroot.findall('part'):
+        # print pyprefix + part.tag, part.attrib
+        if ('all' == targetpart) or (targetpart == part.get('name')):
+            #print pyprefix + 'processing part = ' + part.get('name')
+            for brd in part.findall('board'):
+
+                prp = get_board_properties2(boardroot, brd)
+
+                if len(prp) == 0:
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+                    continue
+
+                if ('all' == targetboard) or (targetboard == brd.get('type')):
+                
+                    countOfFound = countOfFound + 1
+                    # details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
+                    details = 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+
+                    if _excludedboard == brd.get('type'):
+                        
+                        countOfExcluded = countOfExcluded + 1
+                        if _verbose > 0:
+                            print pyprefix + '- EXCLUSION #' + str(countOfExcluded)
+                            print pyprefix + '  - of: ' + details
+
+                    else:
+
+                        countOfAttempts = countOfAttempts + 1
+
+                        if _verbose > 0:
+                            print pyprefix + '- OPERATION #' + str(countOfAttempts)
+                            print pyprefix + '  - type: firmware verify'
+                            print pyprefix + '  - target: ' + details
+                            print pyprefix + '  - using:  ' + get_string_of_firmwareproperties(prp)
+
+                        r = do_firmware_verify(brd, prp)
+
+
+                        if 0 == r:
+                            if _verbose > 0:
+                                print pyprefix + '  - result: SUCCESS!! the fw version on remote board matches the requirements'
+                        elif 1 == r:
+                            countOfFailures = countOfFailures + 1
+                            print pyprefix + '  - result: ACTION!! the fw version of remote board must be updated'
+                        elif 2 == r:
+                            countOfFailures = countOfFailures + 1
+                            print pyprefix + '  - result: FAILURE!! the remote board cannot be found'
+                        else:
+                            countOfFailures = countOfFailures + 1
+                            print pyprefix + '  - result: FAILURE!! unknown return value from FirmwareUpdater =' + r
+
+                    # end of: if _excl...
+                # end of: if targetboard
+            # end of: for brd
+        # end of: if targetpart
+    # end of: for part
+
+    if _verbose > 0:
+        print_result('verify()', countOfFound, countOfExcluded, countOfFailures)
+    # end of if ...
+
+    return 
+# end of: def verify
+
+
+# send in maintenance all the boards in the xml file which are inside targetpart and are targetboard
+def maintenance(targetpart, targetboard, robotroot, boardroot, verbose):
+
+    r = 1
+
+    countOfFound = 0
+    countOfExcluded = 0
+    countOfFailures = 0
+    countOfAttempts = 0
+
+    if _verbose > 1:
+        print pyprefix + '[debug] processing a --forcemaintenance request:'
+
+    for part in robotroot.findall('part'):
+        # print pyprefix + part.tag, part.attrib
+        if ('all' == targetpart) or (targetpart == part.get('name')):
+            #print pyprefix + 'processing part = ' + part.get('name')
+            for brd in part.findall('board'):
+
+                prp = get_board_properties2(boardroot, brd)
+
+                if len(prp) == 0:
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+                    continue
+
+                if ('all' == targetboard) or (targetboard == brd.get('type')):
+                    
+                    countOfFound = countOfFound + 1
+                    # details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
+                    details = 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+
+                    if _excludedboard == brd.get('type'):
+
+                        countOfExcluded = countOfExcluded + 1
+                        if _verbose > 0:
+                            print pyprefix + '- EXCLUSION #' + str(countOfExcluded)
+                            print pyprefix + '  - of: ' + details
+
+                    else:
+
+                        countOfAttempts = countOfAttempts + 1
+
+                        if _verbose > 0:
+                            print pyprefix + '- OPERATION #' + str(countOfAttempts)
+                            print pyprefix + '  - type: force maintenance'
+                            print pyprefix + '  - target: ' + details                  
+                        
+                        r = goto_maintenance(brd, prp)
+
+                        if 0 != r:
+                            countOfFailures = countOfFailures + 1
+                            print pyprefix + '  - result: FAILURE!! (However, the operation will be attempted with other boards until completion)'
+                            # exit()
+                        elif _verbose > 0:
+                            print pyprefix + '  - result: SUCCESS'
+
+                    # end of: if _excl... 
+                # end of: if targetboard
+            # end of: for brd
+        # end of: if targetpart
+    # end of: for part
+
+    if _verbose > 0:
+        print_result('maintenance()', countOfFound, countOfExcluded, countOfFailures)
+    # end of if ...
+
+    return r
+
+# end of: def
+
+
+
+# program all the boards in the xml file which are inside targetpart and are targetboard
+def program(targetpart, targetboard, robotroot, boardroot, verbose):
+
+    r = 1
+
+    countOfFound = 0
+    countOfExcluded = 0
+    countOfFailures = 0
+    countOfAttempts = 0
+
+    if _verbose > 1:
+        print pyprefix + '[debug] processing a --program request:'
+
+    for part in robotroot.findall('part'):
+        # print pyprefix + part.tag, part.attrib
+        if ('all' == targetpart) or (targetpart == part.get('name')):
+            #print pyprefix + 'processing part = ' + part.get('name')
+            for brd in part.findall('board'):
+
+                prp = get_board_properties2(boardroot, brd)
+
+                if len(prp) == 0:
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+                    continue
+
+                if ('all' == targetboard) or (targetboard == brd.get('type')):
+                
+                    countOfFound = countOfFound + 1
+                    # details = 'part = ' + part.get('name') + ', board = ' + brd.get('type') + ', name = ' + brd.get('name') + ', address = ' + from_board_to_stringofaddress(brd)
+                    details = 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+
+                    if _excludedboard == brd.get('type'):
+                        
+                        countOfExcluded = countOfExcluded + 1
+                        if _verbose > 0:
+                            print pyprefix + '- EXCLUSION #' + str(countOfExcluded)
+                            print pyprefix + '  - of: ' + details
+
+                    else:
+
+                        countOfAttempts = countOfAttempts + 1
+
+                        if _verbose > 0:
+                            print pyprefix + '- OPERATION #' + str(countOfAttempts)
+                            print pyprefix + '  - type: firmware program'
+                            print pyprefix + '  - target: ' + details
+                            print pyprefix + '  - using:  ' + get_string_of_firmwareproperties(prp)
+
+                        r = do_firmware_program(brd, prp)
 
                         if 0 != r:
                             countOfFailures = countOfFailures + 1
@@ -510,11 +1067,11 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
     # end of: for part
 
     if _verbose > 0:
-        print_result('update()', countOfFound, countOfExcluded, countOfFailures)
+        print_result('program()', countOfFound, countOfExcluded, countOfFailures)
     # end of if ...
 
     return 
-# end of: def update
+# end of: def program
 
 # send in maintenance all the boards in the xml file which are inside targetpart and are targetboard
 def maintenance(targetpart, targetboard, robotroot, boardroot, verbose):
@@ -669,7 +1226,7 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
     countOfFailures = 0
     countOfAttempts = 0
 
-    estimatedTimeForFWupdate = 0;
+    estimatedTimeForFWprogram = 0;
 
     if _verbose > 1:
         print pyprefix + '[debug] processing a --info request:'
@@ -704,7 +1261,7 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
     
                         countOfAttempts = countOfAttempts + 1
 
-                        estimatedTimeForFWupdate = estimatedTimeForFWupdate + getTimeOfFirmwareUpdate(brd.get('type'))
+                        estimatedTimeForFWprogram = estimatedTimeForFWprogram + getTimeOfFirmwareUpdate(brd.get('type'))
 
                         if _verbose > 0:
                             print pyprefix + '- OPERATION #' + str(countOfAttempts)
@@ -730,12 +1287,12 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
 
     if _verbose > 0:
         print_result('info()', countOfFound, countOfExcluded, countOfFailures)
-        mi = estimatedTimeForFWupdate // 60
+        mi = estimatedTimeForFWprogram // 60
         ho = mi // 60
         h = ho
         m = mi % 60
-        s = estimatedTimeForFWupdate % 60
-        print pyprefix + '-- Estimated time for fw update: ' + str(estimatedTimeForFWupdate) + ' seconds (' + str(h) + 'h' + str(m) + 'm' + str(s) + 's)'
+        s = estimatedTimeForFWprogram % 60
+        print pyprefix + '-- Estimated time for fw program: ' + str(estimatedTimeForFWprogram) + ' seconds (' + str(h) + 'h' + str(m) + 'm' + str(s) + 's)'
         print pyprefix + '--'
     # end of if ...
 
@@ -763,10 +1320,10 @@ if __name__ == '__main__':
     import argparse
     from argparse import RawTextHelpFormatter
     parser = argparse.ArgumentParser(description='This script is a front-end for the FirmwareUpdater program in non GUI mode. ' +
-                                                 'It performs automatic firmware update on the whole robot, on parts of it, or even on selected board types. ' +
+                                                 'It performs automatic firmware program on the whole robot, on parts of it, or even on selected board types. ' +
                                                  'It exploits two xml files: the first is proper of the robot and contains its topology (which boards, on which driver and address), ' +
                                                  'whereas the second is common to all robots and contains the properties and location of the .hex files.' +
-                                                 '\n' + 'Typical usage is:' + '\n' + 'python updateRobot.py -t topology.iCubGenova02.xml -f firmware.info.xml', formatter_class=RawTextHelpFormatter)
+                                                 '\n' + 'Typical usage is:' + '\n' + 'python updateRobot.py -t topology.iCubGenova02.xml -f firmware.info.xml -a info', formatter_class=RawTextHelpFormatter)
 
     parser.add_argument("-v", "--verbosity", type=int, action="store", required=False, default=1, choices=[0, 1, 2, 3], 
                     help="enables output verbosity. The printed output is: if 0 none, if 1 only basic python output, if every python output, if 2 also FirmwareUpdater. default = 0")
@@ -783,13 +1340,21 @@ if __name__ == '__main__':
     parser.add_argument('-xb', '--excludeboard', action='store', required=False, default='none', 
                     choices=['none', 'ems4', 'mc4plus', 'mc2plus', 'mtb', 'mtb4', 'strain', 'strain2', 'foc', 'mc4', 'mais', 'bll', 'dsp'],
                     help='exclude a board on which to perform the action. default = none')
-    parser.add_argument('-a', '--action', action='store', required=True, default='info', choices=['info', 'update', 'forcemaintenance', 'forceapplication'],
-                    help='the action to perform on on board(s) selected by --part and --board.')
+    parser.add_argument('-a', '--action', action='store', required=True, default='info', choices=['info', 'query', 'verify', 'program', 'forcemaintenance', 'forceapplication'],
+                    help='the action to perform on board(s) selected by --part and --board. ' +
+                         'With info: details inside xml files are printed together with an estimate of programming time. ' +
+                         'With query: boards on the robot are asked about their running FW version. ' +
+                         'With verify: boards on the robot are verified vs FW version specified inside the xml files. ' +
+                         'With program: boards on the robot are programmed with the FW files specified by xml files. ' +
+                         'With forcemaintenance: boards on the robot are sent in maintenance mode. ' +
+                         'With forceapplication: boards on the robot are sent in application mode. ')
     parser.add_argument("-d", "--debug", action="store_true", default=0,
                     help="enables debug mode. its use is reserved to developers and is hence undocumented. default = 0")
 
 
     args = parser.parse_args()  
+
+    # print str(sys.argv[0:])
 
     # pass parameters to program
 
@@ -847,8 +1412,12 @@ if __name__ == '__main__':
 
     if _action == 'info':
         r = info(_part, _board, xmlrootOfRobot, xmlrootOfBoards, _verbose)
-    elif _action == 'update':
-        r = update(_part, _board, xmlrootOfRobot, xmlrootOfBoards, _verbose)
+    elif _action == 'query':
+        r = query(_part, _board, xmlrootOfRobot, xmlrootOfBoards, _verbose)
+    elif _action == 'verify':
+        r = verify(_part, _board, xmlrootOfRobot, xmlrootOfBoards, _verbose)
+    elif _action == 'program':
+        r = program(_part, _board, xmlrootOfRobot, xmlrootOfBoards, _verbose)
     elif _action == 'forcemaintenance':
         r = maintenance(_part, _board, xmlrootOfRobot, xmlrootOfBoards, _verbose)
     elif _action == 'forceapplication':
