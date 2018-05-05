@@ -35,15 +35,15 @@
         
 <!--
         all tested:
--->
         <board type='ems4' name="eb3">
             <ondevice>ETH</ondevice>
             <ataddress ip="10.0.1.3" />
         </board>
 
-        <board type='mtb' name="mtb@eb1:can2:13">
+-->
+        <board type='strain2' name="strain2@eb1:can2:2">
             <ondevice>ETH</ondevice>
-            <ataddress ip="10.0.1.1" canbus="2" canadr="13"  />
+            <ataddress ip="10.0.1.1" canbus="2" canadr="2"  />
         </board>
 <!--
 -->
