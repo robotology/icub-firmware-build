@@ -191,6 +191,34 @@
     
     > FirmwareUpdater --nogui --verbosity 0 --program --device CFW2_CAN --id 9 --can_line 9 --can_id 3 --file skin.hex
     
+
+    ---------------------------------------------------------------------------------------------------------------------------
+    (3) Scripts for automatic management of the robot
+    ---------------------------------------------------------------------------------------------------------------------------    
     
+    The use of command line mode of FirmwareUpdater for management of the robot can be quite complex. The reason is that
+    one must specify the correct sequence of commands, correct addresses and location of binary files for many board, 
+    of each different robot.    
+    
+    For this reason, we have prepared a python program which:
+    -   Loads a topology.robotname.xml file with the description of the boards required by a specific robot.  
+        These files are stored in the robots-configuration repository. 
+    -   Loads the most recent info/firmware.info.xml file from current icub-firmware-build repository to allow
+        finding version and location of the binary files.
+    -   Provides options to select a subset of boards (by bodypart, board name) from topology.robotname.xml.
+    -   Calls FirmwareUpdater in non GUI mode to perform a number of different operations:
+        -   info: prints properties of firmware of the selected boards on a given robot plus estimated programming time
+        -   query: asks the selected boards on a given robot about their firmware versions.
+        -   verify: query the selected boards on the robot about their firmware versions and checks them vs those 
+            specified on file firmware.info.xml
+        -   program: programs all the selected boards on a given robot with the binaries specified by file firmware.info.xml.
+        -   update: program only the selected boards on a given robot which do have a firmware version different from that in
+            file firmware.info.xml. 
+        -   forcemaintenance: force the maintenance mode of the selected boards on a given robot
+        -   forceapplication: force the application mode of the selected boards on a given robot.
+    
+    Examples of bash scripts which wraps the python programs are given in folder /scripts.
+    
+    Read the document FirmwareUpdater.readme.scripts.txt for more details.
     
     
