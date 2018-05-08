@@ -8,9 +8,9 @@ echo ""
 echo ""
 echo ""
 
-echo "this bash is executing: ./manageFWrobot.py -n $ROBOT_CODE/robots-configuration/$ICUB_ROBOTNAME/network.$ICUB_ROBOTNAME.xml -f ../info/firmware.info.xml -p left_leg -a verify | tee ../logs/log.of.FirmwareUpdater.$ICUB_ROBOTNAME.verify.left_leg.txt"
+echo "this bash is executing: ./manageFWrobot.py -n $ROBOT_CODE/robots-configuration/$YARP_ROBOTNAME/network.$YARP_ROBOTNAME.xml -f ../info/firmware.info.xml -p left_leg -a verify | tee ../logs/log.of.FirmwareUpdater.$YARP_ROBOTNAME.verify.left_leg.txt"
 echo ""
-./manageFWrobot.py -n $ROBOT_CODE/robots-configuration/$ICUB_ROBOTNAME/network.$ICUB_ROBOTNAME.xml -f ../info/firmware.info.xml -p left_leg -a verify | tee ../logs/log.of.FirmwareUpdater.$ICUB_ROBOTNAME.verify.left_leg.txt 
+./manageFWrobot.py -n $ROBOT_CODE/robots-configuration/$YARP_ROBOTNAME/network.$YARP_ROBOTNAME.xml -f ../info/firmware.info.xml -p left_leg -a verify | tee ../logs/log.of.FirmwareUpdater.$YARP_ROBOTNAME.verify.left_leg.txt 
 echo ""
-echo "this bash has executed: ./manageFWrobot.py -n $ROBOT_CODE/robots-configuration/$ICUB_ROBOTNAME/network.$ICUB_ROBOTNAME.xml -f ../info/firmware.info.xml -p left_leg -a verify | tee ../logs/log.of.FirmwareUpdater.$ICUB_ROBOTNAME.verify.left_leg.txt"
+echo "this bash has executed: ./manageFWrobot.py -n $ROBOT_CODE/robots-configuration/$YARP_ROBOTNAME/network.$YARP_ROBOTNAME.xml -f ../info/firmware.info.xml -p left_leg -a verify | tee ../logs/log.of.FirmwareUpdater.$YARP_ROBOTNAME.verify.left_leg.txt"
 echo ""
