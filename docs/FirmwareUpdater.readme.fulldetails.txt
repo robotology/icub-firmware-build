@@ -200,12 +200,12 @@
     one must specify the correct sequence of commands, correct addresses and location of binary files for many board, 
     of each different robot.    
     
-    For this reason, we have prepared a python program which:
-    -   Loads a topology.robotname.xml file with the description of the boards required by a specific robot.  
+    For this reason, we have prepared a python program, manageFWrobot.py, which:
+    -   Loads a network.$ICUB_ROBOTNAME.xml file with the description of the boards required by a specific robot.  
         These files are stored in the robots-configuration repository. 
     -   Loads the most recent info/firmware.info.xml file from current icub-firmware-build repository to allow
         finding version and location of the binary files.
-    -   Provides options to select a subset of boards (by bodypart, board name) from topology.robotname.xml.
+    -   Provides options to select a subset of boards (by bodypart, board name) from network.$ICUB_ROBOTNAME.xml.
     -   Calls FirmwareUpdater in non GUI mode to perform a number of different operations:
         -   info: prints properties of firmware of the selected boards on a given robot plus estimated programming time
         -   query: asks the selected boards on a given robot about their firmware versions.

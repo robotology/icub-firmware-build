@@ -79,7 +79,7 @@ def get_board_properties2(boardroot, brd):
     if brd.get('required', '') == 'version':
         findAlsoByVersion = True       
         if None == brd.find('version'):
-            print pyprefix + errorprefix + 'syntax error in the xml robot topology: cannot find tag <version> as indicated by <board type= .... required="version">'  
+            print pyprefix + errorprefix + 'syntax error in the xml robot network: cannot find tag <version> as indicated by <board type= .... required="version">'  
             print pyprefix + errorprefix + 'i will not consider this board. please rewrite the xml file.'
             return prop
         targetversion = brd.find('version').attrib
@@ -87,7 +87,7 @@ def get_board_properties2(boardroot, brd):
         tminor = targetversion.get('minor', '0')
         tbuild = targetversion.get('build', '0')
     elif brd.get('required', '') != '':
-        print pyprefix + errorprefix + 'syntax error in the xml robot topology: <board type= .... required="' + brd.get('required') +'"> is not allowed. if required is present, it can be only: ="version"'
+        print pyprefix + errorprefix + 'syntax error in the xml robot network: <board type= .... required="' + brd.get('required') +'"> is not allowed. if required is present, it can be only: ="version"'
         print pyprefix + errorprefix + 'i will not consider this board. please rewrite the xml file.'
         return prop
 
@@ -878,7 +878,7 @@ def query(targetpart, targetboard, robotroot, boardroot, verbose):
                 prp = get_board_properties2(boardroot, brd)
 
                 if len(prp) == 0:
-                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of network file'
                     print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
                     continue
 
@@ -958,7 +958,7 @@ def verify(targetpart, targetboard, robotroot, boardroot, verbose):
                 prp = get_board_properties2(boardroot, brd)
 
                 if len(prp) == 0:
-                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of network file'
                     print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
                     continue
 
@@ -1048,7 +1048,7 @@ def maintenance(targetpart, targetboard, robotroot, boardroot, verbose):
                 prp = get_board_properties2(boardroot, brd)
 
                 if len(prp) == 0:
-                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of network file'
                     print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
                     continue
 
@@ -1121,7 +1121,7 @@ def program(targetpart, targetboard, robotroot, boardroot, verbose):
                 prp = get_board_properties2(boardroot, brd)
 
                 if len(prp) == 0:
-                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of network file'
                     print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
                     continue
 
@@ -1193,7 +1193,7 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
                 prp = get_board_properties2(boardroot, brd)
 
                 if len(prp) == 0:
-                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of network file'
                     print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
                     continue
 
@@ -1270,7 +1270,7 @@ def maintenance(targetpart, targetboard, robotroot, boardroot, verbose):
                 prp = get_board_properties2(boardroot, brd)
 
                 if len(prp) == 0:
-                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of network file'
                     print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
                     continue
 
@@ -1341,7 +1341,7 @@ def application(targetpart, targetboard, robotroot, boardroot, verbose):
                 prp = get_board_properties2(boardroot, brd)
 
                 if len(prp) == 0:
-                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of network file'
                     print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
                     continue
 
@@ -1415,7 +1415,7 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
                 prp = get_board_properties2(boardroot, brd)
 
                 if len(prp) == 0:
-                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of topology file'
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of network file'
                     print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
                     continue
 
@@ -1496,13 +1496,13 @@ if __name__ == '__main__':
     from argparse import RawTextHelpFormatter
     parser = argparse.ArgumentParser(description='This script is a front-end for the FirmwareUpdater program in non GUI mode. ' +
                                                  'It performs automatic firmware program on the whole robot, on parts of it, or even on selected board types. ' +
-                                                 'It exploits two xml files: the first is proper of the robot and contains its topology (which boards, on which driver and address), ' +
+                                                 'It exploits two xml files: the first is proper of the robot and contains its network (which boards, on which driver and address), ' +
                                                  'whereas the second is common to all robots and contains the properties and location of the .hex files.' +
-                                                 '\n' + 'Typical usage is:' + '\n' + 'python updateRobot.py -t topology.iCubGenova02.xml -f firmware.info.xml -a info', formatter_class=RawTextHelpFormatter)
+                                                 '\n' + 'Typical usage is:' + '\n' + 'python manageFWrobot.py -t network.iCubGenova02.xml -f firmware.info.xml -a info', formatter_class=RawTextHelpFormatter)
 
     parser.add_argument("-v", "--verbosity", type=int, action="store", required=False, default=1, choices=[0, 1, 2, 3], 
                     help="enables output verbosity. The printed output is: if 0 none, if 1 only basic python output, if every python output, if 2 also FirmwareUpdater. default = 0")
-    parser.add_argument('-t', '--topology', action='store', required=True, type=argparse.FileType('r'),
+    parser.add_argument('-n', '--network', action='store', required=True, type=argparse.FileType('r'),
                     help='the .xml file with the description of the robot in parts and boards')
     parser.add_argument('-f', '--firmware', action='store', required=True, type=argparse.FileType('r'),
                     help='the .xml file with the properties of the firmware of the boards (file path, fw version, etc.)')
@@ -1535,7 +1535,7 @@ if __name__ == '__main__':
     # pass parameters to program
 
     _verbosity = args.verbosity
-    _filerobot = args.topology.name
+    _filerobot = args.network.name
     _fileboards = args.firmware.name
     _part = args.part
     _board = args.board
