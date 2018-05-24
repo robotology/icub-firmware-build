@@ -1,5 +1,25 @@
 <?xml version="1.0"?>
 
+<!--    description 
+
+        this xml file contains the file location and application version of the firmware
+        binaries of every board mounted on the robots.
+        
+        the aim of this xml file is to be parsed by the python program robotFWmanager.py
+        
+        every time a new firmware is released, the person who commits the binary shall 
+        also update this file with the correct application version.
+        
+        the application version for ETH boards has a major.minor format, whereas the 
+        CAN boards have a major.minor.build format.
+        
+        very important: the fields major, minor, build are all expressed in decimal
+        format and the FirmwareUpdater application and all .sh / .py scripts also
+        use decimal format. however, some file names still have the minor number 
+        which may be expressed in hex format. That is the case of boards mc4 and bll.
+         
+  -->
+
 <info>
 
     <board type="ems4">
