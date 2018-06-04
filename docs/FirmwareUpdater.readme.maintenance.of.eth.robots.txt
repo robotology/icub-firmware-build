@@ -38,8 +38,8 @@
     mc2plusLoader, mc2plusUpdater. The names of the eApplication for the various boards are ... many. 
     Typically we have ems.hex, mc4plus.hex etc. 
 
-    In the following, we refer to the EMS board. For other boards the procedure is the same, but the names and the directories 
-    change accordingly.
+    In the following, we refer to the EMS board. For other ETH boards (MC4PLUS, MC2PLUS) the procedure is the same, but the 
+    names and the directories change accordingly.
 
 
 
