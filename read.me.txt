@@ -18,19 +18,22 @@
     ---------------------------------------------------------------------------------------------------------------------------
 
     -   CAN
-        firmware binaries of all the CAN based boards (2foc, mais, strain, etc.).
+        firmware binaries of all the CAN based boards (2foc, mais, strain, etc.)
 
     -   ETH
-        firmware binaries of all the ETH based boards (ems, mc4plus, mc2plus). 
+        firmware binaries of all the ETH based boards (ems, mc4plus, mc2plus) 
     
     -   docs
-        documentation.
+        documentation
 
     -   info
-        the firmware versions of all binaries.
+        the firmware versions of all binaries
+
+    -   logs
+        the result of the script execution
 
     -   scripts
-        all scripts for firmware update. 
+        all scripts for firmware managenent.
 
     -   testing
         all temporary binaries used for testing
