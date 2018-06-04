@@ -1,0 +1,102 @@
+# Use of scripts for automatic firmware update
+
+    ---------------------------------------------------------------------------------------------------------------------------
+    (1) The manageFWrobot.py program
+    ---------------------------------------------------------------------------------------------------------------------------
+    
+    The python program manageFWrobot.py reads two xml files and performs actions on the robot with calls to FirmwareUpdater
+    used in command line mode.
+    
+    The use of command line mode of FirmwareUpdater for management of the robot can be quite complex. The reason is that
+    one must specify the correct sequence of commands, correct addresses and location of binary files for many board, 
+    of each different robot.    
+    
+    For this reason, we have prepared a python program, manageFWrobot.py, which:
+    -   Loads a network.$ICUB_ROBOTNAME.xml file with the description of the boards required by a specific robot.  
+        These files are stored in the robots-configuration repository. 
+    -   Loads the most recent info/firmware.info.xml file from current icub-firmware-build repository to allow
+        finding version and location of the binary files.
+    -   Provides options to select a subset of boards (by bodypart, board name) from network.$ICUB_ROBOTNAME.xml.
+    -   Calls FirmwareUpdater in non GUI mode to perform a number of different operations:
+        -   info: prints properties of firmware of the selected boards on a given robot plus estimated programming time
+        -   query: asks the selected boards on a given robot about their firmware versions.
+        -   verify: query the selected boards on the robot about their firmware versions and checks them vs those 
+            specified on file firmware.info.xml
+        -   program: programs all the selected boards on a given robot with the binaries specified by file firmware.info.xml.
+        -   update: program only the selected boards on a given robot which do have a firmware version different from that in
+            file firmware.info.xml. 
+        -   forcemaintenance: force the maintenance mode of the selected boards on a given robot
+        -   forceapplication: force the application mode of the selected boards on a given robot.
+    
+    One example of use is the following:
+    icub-firmware-build/scripts> ./manageFWrobot.py 
+                                 -n $ROBOT_CODE/robots-configuration/$YARP_ROBOT_NAME/network.$YARP_ROBOT_NAME.xml 
+                                 -f ../info/firmware.info.xml 
+                                 -p all -b ems4 -a update
+    
+    This call of manageFWrobot.py uses the network of the current robot, the firmware location of the current repository 
+    and ... performs an update (-a update  or --action update) for all the parts of the robot) (-p all or --part all) only 
+    for the boards of ems4 kind (-b ems4 or --board ems4).
+    
+    One can compose any of those commands upon choice, for instance one may want to update only the left leg for all the boards:
+    icub-firmware-build/scripts> ./manageFWrobot.py 
+                                 -n $ROBOT_CODE/robots-configuration/$YARP_ROBOT_NAME/network.$YARP_ROBOT_NAME.xml 
+                                 -f ../info/firmware.info.xml 
+                                 -p left_leg -b all -a update
+           
+    
+    ---------------------------------------------------------------------------------------------------------------------------
+    (2) Use of bash scripts
+    ---------------------------------------------------------------------------------------------------------------------------
+     
+    In folder icub-firmware-build/scripts there are several examples of bash scripts for performing update or verify or other 
+    actions.
+    
+    It is advisable to use them with some care, because one could run one script script (for instance the one which force
+    programming of every board in the robot) and finds out that it takes hours to complete. 
+
+    Hence, here is the suggest way to proceed.
+    
+    (2).a   Check the xml files
+    
+    Run the script `FirmwareUpdater.script.info.all.sh` to verify that all the xml files can be found.
+    This command will just print all the firmware files for each board of the robot and will tell an estimate of how long
+    it may take to perform a full programming of every board.
+    
+    This time can be several hours.
+    
+    If this script gives errors, typically it is because:
+    - file robots-configuration//network..xml cannot be found. In such a case you dont have $YARP_ROBOT_NAME defined.
+    - file network.XXX.xml cannot be found (assuming your robot name is XXX). In such a case please contact icubsupport
+      and ask for the network file of your robot.
+    
+    (2).b   Check the firmware versions on the robot.
+    
+    Run the script `FirmwareUpdater.script.verify.all.sh` to verify the status of the robot.
+    This command will ask the boards their firmware version and compare them with the required one (written inside file
+    ../info/firmware.info.xml). It will tell which boards need firmware update and how long this operation will take.
+    
+    It will also tell if some boards cannot be found. 
+    
+    (2).c   Update the firmware on the robot.
+    
+    Run the script `FirmwareUpdater.script.update.all.sh` to program only those firmware which are not the latest version.
+    This command will last about the amount of time predicted by `FirmwareUpdater.script.verify.all.sh` or some more.
+    
+    If the amount of time seems too long, one can update one body part at a time, for instance with commands: 
+    - `FirmwareUpdater.script.update.face.sh`
+    - `FirmwareUpdater.script.update.head.sh`
+    - `FirmwareUpdater.script.update.left_arm.sh`
+    - etc.
+    
+    As an alternative, one can update only one board type at a time:
+    - `FirmwareUpdater.script.update.all.ems4.sh`
+    - `FirmwareUpdater.script.update.all.foc.sh`
+    - etc.
+    
+    ---------------------------------------------------------------------------------------------------------------------------
+    (3) Log files
+    ---------------------------------------------------------------------------------------------------------------------------    
+    
+    The result of the launch of each bash script is saved in folder /logs
+    
