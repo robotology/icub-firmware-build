@@ -276,10 +276,10 @@ def do_firmware_verify_cfw(brd, prp):
         r = 0
     elif 1 == r:
         if _verbose > 1:
-            print pyprefix + debugprefix + 'do_firmware_verify_cfw(): TODO update FW of can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+            print pyprefix + debugprefix + 'do_firmware_verify_cfw(): TODO update FW of can board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
         return r 
     else:
-        print pyprefix + errorprefix + 'do_firmware_verify_cfw(): ERROR cannot find can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+        print pyprefix + errorprefix + 'do_firmware_verify_cfw(): ERROR cannot find can board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
         return r     
 
     if _verbose > 1:
@@ -302,7 +302,7 @@ def do_firmware_verify_canovereth(brd, prp):
     r = eth_force_maintenance(brd, prp)
 
     if 0 != r:
-        print pyprefix + errorprefix + 'do_firmware_verify_canovereth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
+        print pyprefix + errorprefix + 'do_firmware_verify_canovereth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip', '0')
         return r   
 
     stringOfCANfwversion = from_firmware_to_stringofversion(fw)
@@ -326,10 +326,10 @@ def do_firmware_verify_canovereth(brd, prp):
         r = 0
     elif 1 == r:
         if _verbose > 1:
-            print pyprefix + debugprefix + 'do_firmware_verify_canovereth(): TODO update FW of can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+            print pyprefix + debugprefix + 'do_firmware_verify_canovereth(): TODO update FW of can board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
         return r 
     else:
-        print pyprefix + errorprefix + 'do_firmware_verify_canovereth(): ERROR cannot find can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+        print pyprefix + errorprefix + 'do_firmware_verify_canovereth(): ERROR cannot find can board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
         return r 
 
     if _verbose > 1:
@@ -351,11 +351,11 @@ def do_firmware_verify_eth(brd, prp):
 #    r = eth_force_maintenance(brd, prp)
 #
 #    if 0 != r:
-#        print pyprefix + errorprefix + 'do_firmware_verify_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
+#        print pyprefix + errorprefix + 'do_firmware_verify_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip', '0')
 #        return r     
 
     stringOfETHfwversion = from_firmware_to_stringofversionETH(fw)
-    command = 'FirmwareUpdater --nogui --verify ' + stringOfETHfwversion + ' --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip') + ' --verbosity ' + str(_verbosityFU)
+    command = 'FirmwareUpdater --nogui --verify ' + stringOfETHfwversion + ' --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip', '0') + ' --verbosity ' + str(_verbosityFU)
 
     if _verbose > 1:
         print pyprefix + debugprefix + 'do_firmware_verify_eth(): verifying eth firmware w/ command:'        
@@ -372,10 +372,10 @@ def do_firmware_verify_eth(brd, prp):
         r = 0
     elif 1 == r:
         if _verbose > 1:
-            print pyprefix + debugprefix + 'do_firmware_verify_eth(): TODO update FW of eth board @ ' + adr.get('ip')
+            print pyprefix + debugprefix + 'do_firmware_verify_eth(): TODO update FW of eth board @ ' + adr.get('ip', '0')
         return r 
     else:
-        print pyprefix + errorprefix + 'do_firmware_verify_eth(): ERROR cannot find eth board @ ' + adr.get('ip')
+        print pyprefix + errorprefix + 'do_firmware_verify_eth(): ERROR cannot find eth board @ ' + adr.get('ip', '0')
         return r 
 
     if _verbose > 1:
@@ -437,7 +437,7 @@ def do_firmware_query_cfw(brd, prp):
     if 0 == r:
         r = 0
     else:
-         print pyprefix + errorprefix + 'do_firmware_query_cfw(): ERROR cannot find can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         print pyprefix + errorprefix + 'do_firmware_query_cfw(): ERROR cannot find can board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
          return r     
 
     if _verbose > 1:
@@ -460,7 +460,7 @@ def do_firmware_query_canovereth(brd, prp):
     r = eth_force_maintenance(brd, prp)
 
     if 0 != r:
-        print pyprefix + errorprefix + 'do_firmware_query_canovereth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
+        print pyprefix + errorprefix + 'do_firmware_query_canovereth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip', '0')
         return r   
 
     #stringOfCANfwversion = from_firmware_to_stringofversion(fw)
@@ -483,7 +483,7 @@ def do_firmware_query_canovereth(brd, prp):
     if 0 == r:
         r = 0
     else:
-         print pyprefix + errorprefix + 'do_firmware_query_canovereth(): ERROR cannot find can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         print pyprefix + errorprefix + 'do_firmware_query_canovereth(): ERROR cannot find can board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
          return r 
 
     if _verbose > 1:
@@ -505,11 +505,11 @@ def do_firmware_query_eth(brd, prp):
 #    r = eth_force_maintenance(brd, prp)
 #
 #    if 0 != r:
-#        print pyprefix + errorprefix + 'do_firmware_query_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
+#        print pyprefix + errorprefix + 'do_firmware_query_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip', '0')
 #        return r     
 
 #    stringOfETHfwversion = from_firmware_to_stringofversionETH(fw)
-    command = 'FirmwareUpdater --nogui --query' + ' --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip') + ' --verbosity ' + str(_verbosityFU)
+    command = 'FirmwareUpdater --nogui --query' + ' --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip', '0') + ' --verbosity ' + str(_verbosityFU)
 
     if _verbose > 1:
         print pyprefix + debugprefix + 'do_firmware_query_eth(): querying eth board + firmware w/ command:'        
@@ -525,7 +525,7 @@ def do_firmware_query_eth(brd, prp):
     if 0 == r:
         r = 0
     else:
-         print pyprefix + errorprefix + 'do_firmware_query_eth(): ERROR cannot find eth board @ ' + adr.get('ip')
+         print pyprefix + errorprefix + 'do_firmware_query_eth(): ERROR cannot find eth board @ ' + adr.get('ip', '0')
          return r 
 
     if _verbose > 1:
@@ -651,7 +651,7 @@ def do_firmware_program_cfw(brd, prp):
     r = r / 256
 
     if 0 != r:
-         print pyprefix + errorprefix + 'do_firmware_program_cfw(): FAILURE programming can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         print pyprefix + errorprefix + 'do_firmware_program_cfw(): FAILURE programming can board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
          return r 
 
 
@@ -675,10 +675,10 @@ def do_firmware_program_canovereth(brd, prp):
     r = eth_force_maintenance(brd, prp)
 
     if 0 != r:
-        print pyprefix + errorprefix + 'do_firmware_program_canovereth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
+        print pyprefix + errorprefix + 'do_firmware_program_canovereth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip', '0')
         return r   
 
-    tmp1 = 'FirmwareUpdater --nogui --program --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip')
+    tmp1 = 'FirmwareUpdater --nogui --program --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip', '0')
     tmp2 = ' --can_line ' + adr.get('canbus', '0') + ' --can_id ' + adr.get('canadr', '0') + ' --file ' + fw.find('file').text + ' --verbosity ' + str(_verbosityFU)
     command = tmp1 + tmp2
 
@@ -699,7 +699,7 @@ def do_firmware_program_canovereth(brd, prp):
     r = r / 256
 
     if 0 != r:
-         print pyprefix + errorprefix + 'do_firmware_program_canovereth(): FAILURE programming can board @ ' + adr.get('ip') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
+         print pyprefix + errorprefix + 'do_firmware_program_canovereth(): FAILURE programming can board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')
          return r 
 
 
@@ -722,11 +722,11 @@ def do_firmware_program_eth(brd, prp):
     r = eth_force_maintenance(brd, prp)
 
     if 0 != r:
-        print pyprefix + errorprefix + 'do_firmware_program_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip')
+        print pyprefix + errorprefix + 'do_firmware_program_eth(): FAILURE sending in maintenance mode eth board @ ' + adr.get('ip', '0')
         return r     
 
    
-    command = 'FirmwareUpdater --nogui --program --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip') + ' --file ' + fw.find('file').text + ' --verbosity ' + str(_verbosityFU)
+    command = 'FirmwareUpdater --nogui --program --device ' + brd.find('ondevice').text + ' --id eth1 --eth_board ' + adr.get('ip', '0') + ' --file ' + fw.find('file').text + ' --verbosity ' + str(_verbosityFU)
 
     if _verbose > 1:
         print pyprefix + debugprefix + 'do_firmware_program_eth(): uploading eth firmware w/ command:'        
@@ -745,7 +745,7 @@ def do_firmware_program_eth(brd, prp):
     r = r / 256
 
     if 0 != r:
-         print pyprefix + errorprefix + 'do_firmware_program_eth(): FAILURE programming eth board @ ' + adr.get('ip')
+         print pyprefix + errorprefix + 'do_firmware_program_eth(): FAILURE programming eth board @ ' + adr.get('ip', '0')
          return r 
 
 
