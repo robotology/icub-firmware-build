@@ -117,6 +117,13 @@ def from_board_to_stringofaddress(brd):
     return ss
 # end of: def
 
+# it retrieves the ip address of a board in string form
+def from_board_to_stringofIPaddress(brd):
+    adr = brd.find('ataddress').attrib
+    ss = adr.get('ip', '0')
+    return ss
+# end of: def
+
 # it retrieves the address of a board in string form
 def from_board_to_stringofrequiredversion(brd):
     sss = ''
@@ -1475,6 +1482,111 @@ def info(targetpart, targetboard, robotroot, boardroot, verbose):
 
 # end of: def info()
 
+
+def findInprev(currIP, targetpart, targetboard, robotroot, boardroot, verbose):
+
+    brd1 = 'none'
+
+    countOfFound = 0
+    countOfExcluded = 0
+    countOfFailures = 0
+    countOfAttempts = 0
+
+    #print 'looking for a prev = ' + currIP
+
+    for part in robotroot.findall('part'):
+        # print pyprefix + part.tag, part.attrib
+        if ('all' == targetpart) or (targetpart == part.get('name')):
+            #print pyprefix + 'processing part = ' + part.get('name')
+            for brd in part.findall('board'):
+
+                prp = get_board_properties2(boardroot, brd)
+
+                if len(prp) == 0:
+                    print pyprefix + errorprefix + 'cannot find a match for ' + 'following board' + ' in firmware xml file. i continue parsing other boards of network file'
+                    print pyprefix + errorprefix + 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+                    continue
+
+                if ('all' == targetboard) or (targetboard == brd.get('type')):
+
+
+                    details = 'part = ' + part.get('name') + ', ' + get_string_of_fulldescriptionofboard(brd)
+ 
+                    if _excludedboard == brd.get('type'):
+                        
+                        countOfExcluded = countOfExcluded + 1
+                        if _verbose > 0:
+                            print pyprefix + '- EXCLUSION #' + str(countOfExcluded)
+                            print pyprefix + '  - of: ' + details
+
+                    else:
+    
+
+                        
+
+                        if 'ETH' == brd.find('ondevice').text:
+
+                            if None != brd.find('connected'):
+
+                                con = brd.find('connected').attrib
+                                ss = con.get('prev', '0')
+                            
+                                adr = from_board_to_stringofaddress(brd);
+                                # print 'eval: ' + adr
+                        
+                                if ss == currIP:
+                                    #print 'found:' + adr
+                                    return brd
+
+
+                    # end of: if _excl...  
+
+                # end of: if targetboard
+            # end of: for brd
+        # end of: if targetpart
+    # end of: for part
+
+    return brd1
+
+# end of: def findInprev()
+
+
+# prints info on topology
+def topology(targetpart, targetboard, robotroot, boardroot, verbose):
+
+    r = 1
+
+    countOfFound = 0
+    countOfExcluded = 0
+    countOfFailures = 0
+    countOfAttempts = 0
+
+    estimatedTimeForFWprogram = 0;
+
+    if _verbose > 1:
+        print pyprefix + '[debug] processing a --topology request:'
+
+    currIP = '10.0.1.104'
+    nextIP = 'none'
+    prevIP = 'none'
+
+    print pyprefix + 'topology of ETH:'
+    print pyprefix + currIP + '->'
+    while True:
+        brd = findInprev(currIP, targetpart, targetboard, robotroot, boardroot, verbose)
+        if 'none' == brd:
+            break
+        print pyprefix + from_board_to_stringofIPaddress(brd) + '-> '
+        adr = brd.find('ataddress').attrib
+        currIP = adr.get('ip', '0')
+    
+    print pyprefix + 'end of bus'
+
+    return r
+
+# end of: def topology()
+
+
 def print_result(nameOfCaller, nFound, nExcluded, nFailures):
 
     print pyprefix + '--'
@@ -1515,9 +1627,10 @@ if __name__ == '__main__':
     parser.add_argument('-xb', '--excludeboard', action='store', required=False, default='none', 
                     choices=['none', 'ems4', 'mc4plus', 'mc2plus', 'mtb', 'mtb4', 'strain', 'strain2', 'foc', 'mc4', 'mais', 'bll', 'dsp'],
                     help='exclude a board on which to perform the action. default = none')
-    parser.add_argument('-a', '--action', action='store', required=True, default='info', choices=['info', 'query', 'verify', 'update', 'program', 'forcemaintenance', 'forceapplication'],
+    parser.add_argument('-a', '--action', action='store', required=True, default='info', choices=['info', 'topology', 'query', 'verify', 'update', 'program', 'forcemaintenance', 'forceapplication'],
                     help='the action to perform on board(s) selected by --part and --board. ' +
                          'With info: details inside xml files are printed together with an estimate of programming time. ' +
+                         'With topology: eth topology details inside xml files are printed. ' +
                          'With query: boards on the robot are asked about their running FW version. ' +
                          'With verify: boards on the robot are verified vs FW version specified inside the xml files. ' +
                          'With update: boards on the robot are programmed with the FW files specified by xml files only if their FW version is not aligned. ' +
@@ -1600,6 +1713,8 @@ if __name__ == '__main__':
         r = maintenance(_part, _board, xmlrootOfRobot, xmlrootOfBoards, _verbose)
     elif _action == 'forceapplication':
         r = application(_part, _board, xmlrootOfRobot, xmlrootOfBoards, _verbose)
+    elif _action == 'topology':
+        r = topology(_part, _board, xmlrootOfRobot, xmlrootOfBoards, _verbose)
     else:
         print pyprefix + '[error] unsupported action: ' + _action
 
