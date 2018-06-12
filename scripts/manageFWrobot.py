@@ -220,7 +220,7 @@ def goto_maintenance(brd, prp):
         else:
             print pyprefix + errorprefix + 'goto_maintenance(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
             r = 1        
-    elif 'CFW2' == ondevice:
+    elif 'CFW' == ondevice:
         print pyprefix + '    [info]: boards on device ' + ondevice + ' dont need to be forced in maintenance mode!'   
         r = 0
     else:
@@ -244,7 +244,7 @@ def goto_application(brd, prp):
         else:
             print pyprefix + errorprefix + 'goto_application(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
             r = 1        
-    elif 'CFW2' == ondevice:
+    elif 'CFW' == ondevice:
         print pyprefix + '    [info]: boards on device ' + ondevice + ' dont need to be forced in application mode!'  
         r = 0  
     else:
@@ -406,7 +406,7 @@ def do_firmware_verify(brd, prp):
         else:
             print pyprefix + errorprefix + 'do_firmware_verify(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
             r = 2        
-    elif 'CFW2' == ondevice:
+    elif 'CFW' == ondevice:
         r = do_firmware_verify_cfw(brd, prp)
     else:
         print pyprefix + errorprefix + 'do_firmware_verify(): FAILURE the device ' + ondevice + ' is unsupported'
@@ -556,7 +556,7 @@ def do_firmware_query(brd, prp):
         else:
             print pyprefix + errorprefix + 'do_firmware_query(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
             r = 2        
-    elif 'CFW2' == ondevice:
+    elif 'CFW' == ondevice:
         r = do_firmware_query_cfw(brd, prp)
     else:
         print pyprefix + errorprefix + 'do_firmware_query(): FAILURE the device ' + ondevice + ' is unsupported'
@@ -618,7 +618,7 @@ def do_firmware_program(brd, prp):
         else:
             print pyprefix + errorprefix + 'do_firmware_program(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
             r = 1        
-    elif 'CFW2' == ondevice:
+    elif 'CFW' == ondevice:
         r = do_firmware_program_cfw(brd, prp)
     else:
         print pyprefix + errorprefix + 'do_firmware_program(): FAILURE the device ' + ondevice + ' is unsupported'
@@ -835,7 +835,7 @@ def do_firmware_update(brd, prp):
             print pyprefix + errorprefix + 'do_firmware_update(): FAILURE the device ' + ondevice + ' with CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') + ' is unsupported'
             r = 2   
      
-    elif 'CFW2' == ondevice:
+    elif 'CFW' == ondevice:
 
         r = do_firmware_verify_cfw(brd, prp)
 
