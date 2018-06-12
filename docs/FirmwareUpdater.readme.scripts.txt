@@ -19,6 +19,8 @@
     -   Provides options to select a subset of boards (by bodypart, board name) from network.$ICUB_ROBOTNAME.xml.
     -   Calls FirmwareUpdater in non GUI mode to perform a number of different operations:
         -   info: prints properties of firmware of the selected boards on a given robot plus estimated programming time
+        -   topology: prints the boards in the network file according to their connection order (so far only for the 
+            ETH device and for the whole robot). 
         -   query: asks the selected boards on a given robot about their firmware versions.
         -   verify: query the selected boards on the robot about their firmware versions and checks them vs those 
             specified on file firmware.info.xml
@@ -93,7 +95,13 @@
     - `FirmwareUpdater.script.update.all.ems4.sh`
     - `FirmwareUpdater.script.update.all.foc.sh`
     - etc.
+
+    (2).d   Print the robot topology.
     
+    Run the script `FirmwareUpdater.script.topology.all.sh` to print the topology of the robot.
+    So far this command only prints the ETH boards in the order of connection from the PC104 up to the last one
+    and it does not print the CAN boards underneathe an ETH board or a CFW driver.
+
     ---------------------------------------------------------------------------------------------------------------------------
     (3) Log files
     ---------------------------------------------------------------------------------------------------------------------------    
