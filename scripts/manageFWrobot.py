@@ -1570,17 +1570,21 @@ def topology(targetpart, targetboard, robotroot, boardroot, verbose):
     nextIP = 'none'
     prevIP = 'none'
 
-    print pyprefix + 'topology of ETH:'
-    print pyprefix + currIP + '->'
+    print pyprefix + '<ETH> (in daisy chain order)' 
+    #print pyprefix + '  | (in daisy chain order)'
+    print pyprefix + '   -> 10.0.1.104 [linux host] ->'
+
     while True:
         brd = findInprev(currIP, targetpart, targetboard, robotroot, boardroot, verbose)
         if 'none' == brd:
             break
-        print pyprefix + from_board_to_stringofIPaddress(brd) + '-> '
+        print pyprefix + '   -> ' + from_board_to_stringofIPaddress(brd) + ' [' + brd.get('type') + ', ' + brd.get('name') + '] ->'
         adr = brd.find('ataddress').attrib
         currIP = adr.get('ip', '0')
     
-    print pyprefix + 'end of bus'
+    print pyprefix + '   -> END'
+    print pyprefix + '</ETH>'
+
 
     return r
 
