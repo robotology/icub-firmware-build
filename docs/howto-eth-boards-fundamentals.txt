@@ -69,7 +69,7 @@ IP addresses 10.0.1.x. Attached to the ETH boards there can be CAN boards (2FOC,
 
 
 The ETH boards offer control of the robot by means of an application which talks with yarprobotinterface. 
-This application however, is not execute at bootstrap straight away but after a few seconds.
+This application however, is not executed at bootstrap straight away but after a few seconds.
 Historically, since CAN robots, before the final application is executed we provide a time of 5 seconds 
 from bootstrap to allow some sort of program running on PC104 to contact the boards and perform
 maintenance operations (change of address, FW update, etc.).

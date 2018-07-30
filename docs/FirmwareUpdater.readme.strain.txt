@@ -1,0 +1,85 @@
+
+# Use of FirmwareUpdater for management of the strain / strain2 boards
+
+
+    ---------------------------------------------------------------------------------------------------------------------------
+    Document description
+    ---------------------------------------------------------------------------------------------------------------------------
+    
+    The program FirmwareUpdater, when lanched with the --admin option shows some widgets (at date of june 2018: one button and 
+    one tick box) which are reserved for the special management of the strain / strain2 boards.
+    
+    Here is a brief description of what those widgets do.
+
+    
+    ---------------------------------------------------------------------------------------------------------------------------
+    (1) Normal programming of a strain / strain2 board.
+    ---------------------------------------------------------------------------------------------------------------------------
+   
+    The FW update in FirmwareUpdater is done exactly in the same way as the other CAN boards. 
+    
+    
+    ---------------------------------------------------------------------------------------------------------------------------
+    (2) Programming of a strain / strain2 board with erase of its EEPROM
+    ---------------------------------------------------------------------------------------------------------------------------
+    
+    Only persons from productions or experts should be interested in such a section.
+    
+    One may need to erase the content of the EEPROM where the regulation set(s) of the strain / strain2 are stored. 
+    This operation removes from the boards any calibration done just after assembling of the board, this must be executed
+    only by the expert user.
+    
+    That can be done in the following way:
+    -   launch FirmwareUpdater w/ the --admin option, 
+    -   enable the tick box `Erase STRAIN EEPROM`, 
+    -   use the `Upload Application` button to choose the relevant strain.hex / strain2.hex file
+    
+    At the end, the board will have its default address and the default settings for calibration and amplifiers. 
+ 
+ 
+    ---------------------------------------------------------------------------------------------------------------------------
+    (3) Use of the calibration window during the calibration procedure
+    ---------------------------------------------------------------------------------------------------------------------------
+    
+    Only persons from productions or experts should be interested in such a section.
+    
+    One can launch the calibration window by acting on button `Calibrate STRAIN`.
+    
+    On a brand new board, the exact operations to be performed and related tests are carefully described by an internal procedure
+    document used in production for the calibration of the board.
+    
+    But basically one can do the following.
+    
+    -   Assign a Serial Number
+    -   Tune the six amplifiers so that the ADC values are aligned to a specified value (typically half scale, hence = 0).
+        It can be done by operating on `Tune Amplifier` and on its slide widget.
+    -   Import a calibration matrix (and associated fullscales) with button `Import Calib Matrix`.
+    -   Send the matrix to the board's RAM with button `Send Matrix`.
+    -   Align the calibration bias with button `Set Calibration Bias`.
+    -   Save all new settings from RAM to EEPROM by accepting OK on exit from the window.
+    -   Save the regulation set which is in the EEPROM into a .dat file with button `Save Calibration File`.
+    -   Load from a .dat file a previous regulation set so that it can be sent to the RAM of the board w/ button 
+        `Load Calibration File`.
+    -   Selecting to use either no calibration matrix or the matrix stored in RAM / EEPROM.
+    
+    All the widgets have tooltips which describe what they do.
+    
+    
+    ---------------------------------------------------------------------------------------------------------------------------
+    (4) Use of the calibration window for the reinstall of the EEPROM of a strain / strain2 after the calibration procedure
+    ---------------------------------------------------------------------------------------------------------------------------
+
+    Only persons from productions or experts should be interested in such a section.
+    
+    One can launch the calibration window by acting on button `Calibrate STRAIN`.
+    
+    Then, lo load again the reguslations et of teh strain / strain2 one must:
+    
+    -   Use the `Load Calibration File` button to load the relevent .dat file. This operation will load to RAM.
+    -   Save all new settings from RAM to EEPROM by accepting OK on exit from the window.
+    
+
+
+
+
+
