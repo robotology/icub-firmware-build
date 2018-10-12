@@ -5,21 +5,24 @@
     FirmwareUpdater
     ---------------------------------------------------------------------------------------------------------------------------
     
-    FirmwareUpdater joins the functions of ethLoader and canLoader in a single program. It has both GUI and command line mode
-    and it adds some extra features such as detection of the type of boards and hence more controls over accidental operations 
-    on heterogeneous boards. These new features need a recent version of eLoader and eUpdater. The programs however still runs
-    with all legacy FW versions. Refer to https://github.com/robotology/QA/issues/221 for details about what benefits the new 
-    eLoader and eUpdater give.   
+    FirmwareUpdater allows to manage the firmware of ETH and CAN boards: to see them, to update their firmware and to do extra 
+    operations of strain boards. 
+    It has both GUI and command line mode and it adds some extra features such as detection of the type of boards and hence 
+    more controls over accidental operations on heterogeneous boards. These new features need a recent version of eLoader and 
+    eUpdater. The programs however still runs with all legacy FW versions. 
+    Refer to https://github.com/robotology/QA/issues/221 for details about what benefits the new eLoader and eUpdater give.   
 
-    To use FirmwareUpdater you must have the master release of icub-main at least dated June 2017. Also, you must install the
+    To use FirmwareUpdater you must have any master release of icub-main dated June 2017 or newer. Also, you must install the
     configuration files of your robot from repository robots-configuration. For this operation, please refer to documentation 
     of the repository. The effect of installation is that the file firmwareupdater.ini is placed in the system where the yarp 
     resource finder can find it.
     
-    This .ini file contains a number of drivers under which the program must search for ETH and CAN boards. There are two
-    main types of drivers: ETH<> and CFW2<>. CAN-based robots have only CFW2 devices, first generation of ETH-based robots 
-    have one ETH and two CFW2 devices, most recent ETH-robots have only one ETH device. However, other CAN drivers are also 
-    supported: ECAN, PCAN, SOCKET.  
+    This .ini file contains a number of drivers under which the program must search for ETH and CAN boards. On our robots 
+    there are two main types of drivers: ETH<> and CFW2<>. 
+    CAN-based robots have only CFW2 devices, first generation of ETH-based robots have one ETH and two CFW2 devices, most 
+    recent ETH-robots have only one ETH device. 
+    However, other CAN drivers are also supported: PCAN, SOCKET and ECAN. This latter can be used windows with the ESD 
+    CAN-USB dongle. 
 
     For more details of use on ETH robots, read file ETH/FirmwareUpdater.readme.maintenance.of.eth.robots.txt.
     
@@ -116,13 +119,16 @@
     |                                                                       |  [Upload eUpdater] [Jump to eUpdater]  |    
     |                                                                       |  [Set Def Boot eApplication]           |
     |                                                                       |  [Set Def Boot eUpdater] [Erase ETH..] |
-    |                                                                       |  [Change CAN address] [Calibrate STR.] |
-    |                                                                       |  [ ] Erase STRAIN EEPROM               |
-    ----------------------------------------------------------------------------------------------------------------
+    |                                                                       |  [Change CAN address]                  | 
+    |                                                                       |                                        |   
+    |                                                                       | Strain Operations                      |
+    |                                                                       |  [Acquire] [Calibrate] [] Erase EEPROM |  
+    |                                                                       |                                        |               
+     ----------------------------------------------------------------------------------------------------------------
     |  (--------)                                                                                                    |
      ----------------------------------------------------------------------------------------------------------------
 
-    Figure 2.  The FirmwareUpdater GUI as it appears when launched with "--admim". The Advanced Controls buttons which
+    Figure 2.  The FirmwareUpdater GUI as it appears when launched with "--admin". The Advanced Controls buttons which
                are now made visible allow for expert operations.    
                
         
