@@ -150,6 +150,13 @@
     
     <board type="bll">
         <firmware>
+            <file>../CAN/2bll/2BLL.1.51.out.S</file>   
+            <version major='1' minor='81' build='87'/>
+        </firmware>
+    </board>  
+
+    <board type="bll">
+        <firmware>
             <file>../CAN/2bll/2BLL.1.52.out.S</file>   
             <version major='1' minor='82' build='87'/>
         </firmware>
