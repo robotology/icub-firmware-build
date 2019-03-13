@@ -25,17 +25,25 @@
     <board type="ems4">
         <firmware>
             <file>../ETH/EMS/bin/application/ems.hex</file>  
-            <version major='3' minor='24'/>
+            <version major='3' minor='26'/>
         </firmware>
     </board>
 
     <board type="mc4plus">
         <firmware>
             <file>../ETH/MC4PLUS/bin/application/mc4plus.hex</file>  
-            <version major='3' minor='16'/>
+            <version major='3' minor='19'/>
         </firmware>
     </board>
 
+    
+    <board type="mc2plus">
+        <firmware>
+            <file>../ETH/MC2PLUS/bin/application/mc2plus.hex</file>  
+            <version major='3' minor='10'/>
+        </firmware>
+    </board>
+    
     <board type="mtb">
         <firmware>
             <file>../CAN/mtb/mtb.hex</file>   
@@ -46,7 +54,7 @@
      <board type="mtb4">
         <firmware>
             <file>../CAN/mtb4/mtb4.hex</file>   
-            <version major='1' minor='2' build='1'/>
+            <version major='1' minor='3' build='0'/>
         </firmware>
     </board>   
 
@@ -74,7 +82,7 @@
     <board type="strain2">
         <firmware>
             <file>../CAN/strain2/strain2.hex</file>   
-            <version major='1' minor='4' build='1'/>
+            <version major='1' minor='5' build='4'/>
         </firmware>
     </board>
     
