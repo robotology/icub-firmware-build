@@ -1,0 +1,55 @@
+
+strain2: how to migrate from 128k to 80k version
+
+starting march 2019 the strain2 uses a different mapping of internal flash which places
+the application at 80k. before this date the strain2 assumed the application to be at 128k.
+
+mapping 128k
+
+application                         [128k,  256k)
+sharedstorage+applicationstorage:   [124k,  128k)
+bootloader:                         [000k,  126k)
+   
+
+mapping 80k
+
+applicationstorage: [256k,  256k)
+application         [080k,  252k)
+sharedstorage:      [078k,  080k)
+bootloader:         [000k,  078k)
+
+the mapping at 128k can be recognised because application and bootloader all have major number = 1.
+if you attempt to program a board with a 128k system with a 80k application then the application space will be
+written inteh wrong way and you shall recover only by getting the bootloader (which is ROBUST and will NOT BE
+damaged).
+
+
+as a consequence of that, both the bootloader and the application must be changed.
+
+here is the procedure to follow if you find a 128k board.
+
+1. verify with the FirmwareUpdater which application version there is. If the version is vers 2.x.x
+   then the strain2 is already in 80k mode and there is no need to continue.
+   if else the version is vers 1.x.x then keep on.
+   
+2. enter in the calibration window of the firmware updater and:
+   a. write down the serial number: SNxxxx
+   b. save the calibration file of the strain2. it will be saved with name calibrationDataSNxxxx.dat
+   
+3. you are now ready to upload the special application called: strain2.128k.updaterofbootloader.hex
+   at the end of the operation the FirmwareUpdater will show an application with version: 1.2.222
+   
+4. now you can upload the new bootloader: strain2.bootloader.hex 
+   when the operation is completed, you have to restart the eth board and perform a discovery of the can boards.
+   if nothing is found do:
+   a. select the eth board and press restart.
+   b. wait for 1 second at most and press discovery.   
+   at this point you should find the bootloader running version 2.0 with address = 13.
+  
+5. upload the new strain2.hex binary.
+   at the end of operation you should find the application version 2.0.1 or higher.
+   
+6. now you must open the calibration window and load the file calibrationDataSNxxxx.dat which
+   you saved in step 2. remember to save to eeprom.
+   
+   
