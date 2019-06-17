@@ -25,24 +25,25 @@
     <board type="ems4">
         <firmware>
             <file>../ETH/EMS/bin/application/ems.hex</file>  
-            <version major='3' minor='25'/>
+            <version major='3' minor='26'/>
         </firmware>
     </board>
 
     <board type="mc4plus">
         <firmware>
             <file>../ETH/MC4PLUS/bin/application/mc4plus.hex</file>  
-            <version major='3' minor='17'/>
+            <version major='3' minor='20'/>
         </firmware>
     </board>
 
+    
     <board type="mc2plus">
         <firmware>
             <file>../ETH/MC2PLUS/bin/application/mc2plus.hex</file>  
-            <version major='3' minor='9'/>
+            <version major='3' minor='12'/>
         </firmware>
     </board>
-
+    
     <board type="mtb">
         <firmware>
             <file>../CAN/mtb/mtb.hex</file>   
@@ -53,7 +54,7 @@
      <board type="mtb4">
         <firmware>
             <file>../CAN/mtb4/mtb4.hex</file>   
-            <version major='1' minor='3' build='0'/>
+            <version major='1' minor='3' build='3'/>
         </firmware>
     </board>   
 
@@ -81,10 +82,31 @@
     <board type="strain2">
         <firmware>
             <file>../CAN/strain2/strain2.hex</file>   
-            <version major='1' minor='4' build='0'/>
+            <version major='2' minor='0' build='3'/>
         </firmware>
     </board>
-           
+    
+    <board type="rfe">
+        <firmware>
+            <file>../CAN/rfe/rfe.hex</file>   
+            <version major='1' minor='1' build='1'/>
+        </firmware>
+    </board>    
+ 
+    <board type="psc">
+        <firmware>
+            <file>../CAN/psc/psc.hex</file>   
+            <version major='1' minor='2' build='0'/>
+        </firmware>
+    </board> 
+    
+    <board type="sg3">
+        <firmware>
+            <file>../CAN/sg3/sg3.hex</file>   
+            <version major='0' minor='0' build='2'/>
+        </firmware>
+    </board>       
+    
     <board type="mc4">
         <firmware>
             <file>../CAN/4dc/4DC.1.11.out.S</file>   
@@ -155,6 +177,13 @@
         </firmware>
     </board>  
     
+    <board type="bll">
+        <firmware>
+            <file>../CAN/2bll/2BLL.1.51.out.S</file>   
+            <version major='1' minor='81' build='87'/>
+        </firmware>
+    </board>  
+
     <board type="bll">
         <firmware>
             <file>../CAN/2bll/2BLL.1.52.out.S</file>   
