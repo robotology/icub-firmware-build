@@ -6,8 +6,9 @@
     Document description
     ---------------------------------------------------------------------------------------------------------------------------
     
-    The program FirmwareUpdater, when lanched with the --admin option shows some widgets (at date of june 2018: one button and 
-    one tick box) which are reserved for the special management of the strain / strain2 boards.
+    The program FirmwareUpdater, when lanched with the --admin option shows some widgets under section `Strain Operations` 
+    which are reserved for the special management of the strain / strain2 boards. They are: `Acquisition`  button, `Calibrate` 
+    button and `Erase EEPROM` tick box.
     
     Here is a brief description of what those widgets do.
 
@@ -17,7 +18,6 @@
     ---------------------------------------------------------------------------------------------------------------------------
    
     The FW update in FirmwareUpdater is done exactly in the same way as the other CAN boards. 
-    
     
     ---------------------------------------------------------------------------------------------------------------------------
     (2) Programming of a strain / strain2 board with erase of its EEPROM
@@ -31,36 +31,43 @@
     
     That can be done in the following way:
     -   launch FirmwareUpdater w/ the --admin option, 
-    -   enable the tick box `Erase STRAIN EEPROM`, 
+    -   enable the tick box `Erase EEPROM`, 
     -   use the `Upload Application` button to choose the relevant strain.hex / strain2.hex file
     
     At the end, the board will have its default address and the default settings for calibration and amplifiers. 
  
  
     ---------------------------------------------------------------------------------------------------------------------------
-    (3) Use of the calibration window during the calibration procedure
+    (3) Use of the calibration window 
     ---------------------------------------------------------------------------------------------------------------------------
     
     Only persons from productions or experts should be interested in such a section.
     
-    One can launch the calibration window by acting on button `Calibrate STRAIN`.
+    One can launch the calibration window by acting on button `Calibrate`.
     
     On a brand new board, the exact operations to be performed and related tests are carefully described by an internal procedure
     document used in production for the calibration of the board.
     
     But basically one can do the following.
     
-    -   Assign a Serial Number
-    -   Tune the six amplifiers so that the ADC values are aligned to a specified value (typically half scale, hence = 0).
-        It can be done by operating on `Tune Amplifier` and on its slide widget.
-    -   Import a calibration matrix (and associated fullscales) with button `Import Calib Matrix`.
-    -   Send the matrix to the board's RAM with button `Send Matrix`.
-    -   Align the calibration bias with button `Set Calibration Bias`.
-    -   Save all new settings from RAM to EEPROM by accepting OK on exit from the window.
-    -   Save the regulation set which is in the EEPROM into a .dat file with button `Save Calibration File`.
-    -   Load from a .dat file a previous regulation set so that it can be sent to the RAM of the board w/ button 
+    a.  Assign a Serial Number
+    b.  Tune the six amplifiers so that the ADC values are aligned to a specified value (typically half scale, hence = 0).
+        It can be done by operating in the Analog Regulation box: at first on `Clear` with `Auto Tune` ticked off,
+        amd then on `Apply` with `Auto Tune` ticked on.
+    c.  Import a calibration matrix (and associated fullscales) with button `Import` in the Digital Regulation box.
+        If the files is the one used by production with hex values the file is directly sent to the board and the values
+        are read back for extra check.
+    d.  Align the calibration bias with button `Tune` in the Digital Regulation box.
+    e.  Save all new settings from RAM to EEPROM by clicking in menu `File/Save to EEPROM` or by accepting OK on exit 
+        from the window.
+    f.  Save the regulation set which is in the EEPROM into a .dat file with button `Save Calibration File`.
+    g.  Load from a .dat file a previous regulation set so that it can be sent to the RAM of the board w/ button 
         `Load Calibration File`.
-    -   Selecting to use either no calibration matrix or the matrix stored in RAM / EEPROM.
+    h.  Selecting to use either no digital regulation or the regulation set in use by ticking off / on the 
+        `Apply Digital Regulation`.
+    i.  For strain2 boards, select one of the three the regulation set in use with widget called `Set currently in use:`.
+    j.  For strain2 boards, select one of three regulation sets to be loaded at boostrap by operating on widget 
+        `Set loaded at bootstrap:`.
     
     All the widgets have tooltips which describe what they do.
     
@@ -71,12 +78,32 @@
 
     Only persons from productions or experts should be interested in such a section.
     
-    One can launch the calibration window by acting on button `Calibrate STRAIN`.
+    One can launch the calibration window by acting on button `Calibrate` in section Strain Operations of the main window.
     
-    Then, lo load again the reguslations et of teh strain / strain2 one must:
+    Then, to load again the regulation set of the strain / strain2 one must:
     
-    -   Use the `Load Calibration File` button to load the relevent .dat file. This operation will load to RAM.
-    -   Save all new settings from RAM to EEPROM by accepting OK on exit from the window.
+    a.  Use the `Load Calibration File` button to load the relevent .dat file. This operation will load to RAM.
+    b.  Save all new settings from RAM to EEPROM by clicking in menu `File/Save to EEPROM` or by accepting OK on exit from 
+        the window.
+    
+
+
+    ---------------------------------------------------------------------------------------------------------------------------
+    (5) Use of the acquisition window 
+    ---------------------------------------------------------------------------------------------------------------------------
+
+    Only persons from productions or experts should be interested in such a section.
+
+    By the button `Acquire` in section Strain Operations of the main window, one can launch the acquisition window which 
+    allows to acquire raw ADC values when external forces are applied. 
+
+    It is possible to:
+    a.  use the guided acquisition mode described in the internal procedure document used in production for the calibration 
+        of the board;
+    b.  perform free acquisitions.
+
+    Most widgets have tooltips which describe what they do.
+    
     
 
 

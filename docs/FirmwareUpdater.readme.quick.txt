@@ -6,8 +6,8 @@
     Document description
     ---------------------------------------------------------------------------------------------------------------------------
     
-    The program FirmwareUpdater is the tool with which we perform check and update of FW on iCub. Here are quick instructions 
-    for its use. 
+    The program FirmwareUpdater is the tool with which we perform check and update of FW on iCub and R1. 
+    Here are quick instructions for its use. 
     
     Read instead, file FirmwareUpdater.readme.details.txt to know more on its use and layout, and also file 
     FirmwareUpdater.readme.maintenance.of.eth.robots.txt for specific use on ETH robots.
