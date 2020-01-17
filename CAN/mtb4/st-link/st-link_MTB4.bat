@@ -9,13 +9,10 @@ if %OS%==64BIT set PATH=%ProgramFiles(x86)%
 "%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -ME
 echo;
 echo;
-"%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\bin\environment\mtb4Loader.hex"
+"%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\mtb4.bootloader.hex"
 echo;
 echo;
-"%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\bin\environment\mtb4Updater.hex"
-echo;
-echo;
-"%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\bin\application\mtb4.hex"
+"%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\mtb4.hex"
 echo;
 echo;
 "%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -Rst -Run

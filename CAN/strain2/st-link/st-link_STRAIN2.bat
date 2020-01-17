@@ -9,13 +9,10 @@ if %OS%==64BIT set PATH=%ProgramFiles(x86)%
 "%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -ME
 echo;
 echo;
-"%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\bin\environment\strain2Loader.hex"
+"%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\strain2.bootloader.hex"
 echo;
 echo;
-"%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\bin\environment\strain2Updater.hex"
-echo;
-echo;
-"%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\bin\application\strain2.hex"
+"%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\strain2.hex"
 echo;
 echo;
 "%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -Rst -Run
