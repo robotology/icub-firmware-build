@@ -26,5 +26,5 @@ use these scripts to:
     c. launch burn-updater.bat which will load the updater program into the second partition.
     d. power the board off and then on. 
        the loader will load this program, which will make all leds blink at 1 hz. after 5 seconds the updater will instead blink at 2 hz.
-       the updater is programmed to respond to the ethLoader at address 10.0.1.99
-       any further operations must be done using the ethLoader. 
+       the updater is programmed to respond to the FirmwareUpdater at address 10.0.1.99
+       any further operations must be done using the FirmwareUpdater. 
