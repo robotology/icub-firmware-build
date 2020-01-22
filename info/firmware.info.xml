@@ -25,14 +25,14 @@
     <board type="ems4">
         <firmware>
             <file>../ETH/EMS/bin/application/ems.hex</file>  
-            <version major='3' minor='29'/>
+            <version major='3' minor='30'/>
         </firmware>
     </board>
 
     <board type="mc4plus">
         <firmware>
             <file>../ETH/MC4PLUS/bin/application/mc4plus.hex</file>  
-            <version major='3' minor='22'/>
+            <version major='3' minor='23'/>
         </firmware>
     </board>
 
@@ -98,7 +98,14 @@
             <file>../CAN/psc/psc.hex</file>   
             <version major='1' minor='2' build='3'/>
         </firmware>
-    </board>   
+    </board> 
+    
+    <board type="sg3">
+        <firmware>
+            <file>../CAN/sg3/sg3.hex</file>   
+            <version major='0' minor='0' build='5'/>
+        </firmware>
+    </board>       
     
     <board type="mc4">
         <firmware>
