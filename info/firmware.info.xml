@@ -82,7 +82,7 @@
     <board type="strain2">
         <firmware>
             <file>../CAN/strain2/strain2.hex</file>   
-            <version major='2' minor='0' build='4'/>
+            <version major='2' minor='0' build='7'/>
         </firmware>
     </board>
     
