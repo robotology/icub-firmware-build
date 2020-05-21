@@ -12,6 +12,9 @@ echo;
 "%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\..\bin\environment\mc2plusLoader.hex"
 echo;
 echo;
+"%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\..\bin\application\mc2plusUpdater.hex"
+echo;
+echo;
 "%PATH%\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe" -c -P "..\..\bin\application\mc2plus.hex"
 echo;
 echo;
