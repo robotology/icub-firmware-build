@@ -35,6 +35,5 @@
     -   scripts
         all scripts for firmware managenent.
 
-    -   testing
-        all temporary binaries used for testing
+
 
