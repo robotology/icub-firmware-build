@@ -54,7 +54,7 @@
      <board type="mtb4">
         <firmware>
             <file>../CAN/mtb4/mtb4.hex</file>   
-            <version major='1' minor='4' build='4'/>
+            <version major='1' minor='4' build='5'/>
         </firmware>
     </board>   
 
@@ -82,7 +82,7 @@
     <board type="strain2">
         <firmware>
             <file>../CAN/strain2/strain2.hex</file>   
-            <version major='2' minor='0' build='8'/>
+            <version major='2' minor='0' build='9'/>
         </firmware>
     </board>
     
@@ -96,14 +96,14 @@
     <board type="psc">
         <firmware>
             <file>../CAN/psc/psc.hex</file>   
-            <version major='1' minor='2' build='4'/>
+            <version major='1' minor='2' build='5'/>
         </firmware>
     </board> 
     
     <board type="sg3">
         <firmware>
             <file>../CAN/sg3/sg3.hex</file>   
-            <version major='0' minor='0' build='6'/>
+            <version major='0' minor='0' build='7'/>
         </firmware>
     </board>       
     
