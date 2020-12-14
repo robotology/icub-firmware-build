@@ -7,13 +7,14 @@ For more information on how to upload this firmwares to the boards in the iCub r
 
 ## Firmware Versioning Table 
 
-This table contains information of which version of each release of icub-firmware-build (and corresponding [distro release](https://icub-tech-iit.github.io/documentation/sw_versioning_table/) ) correspond to each firmware version. This is useful to quickly understand to which distro a robot is updated by looking at the firmware version in the FirmwareUpdater tool. 
+The information of which version of each release of icub-firmware-build (and corresponding [distro release](https://icub-tech-iit.github.io/documentation/sw_versioning_table/) ) correspond to each firmware version is contained in the `info/firmware.info.xml` file. The following table provide contain links to this file in the different releases, to quickly access it. 
 
-| [Distro](https://icub-tech-iit.github.io/documentation/sw_versioning_table/) | `icub-firmware-build` | `ems`   | `mc4plus` | `mc2plus`  | `mtb4`   | `strain2` | `2foc`   | `rfe`    | `canprot` | 
-|:----------------------------------------------------------------------------:|:---------------------:|:-------:|:---------:|:----------:|:--------:|:---------:|:--------:|:--------:|:---------:| 
-| `v2020.11`                                                                   | `v1.18.0`             | `v3.33` | `v3.26`   | `v3.17`    | `v1.4.5` | `v2.0.9`  | `v2.3.3` | `v1.2.0` | `v2.0`    |
-| `v2020.08`                                                                   | `v1.17.0`             | `v3.33` | `v3.26`   | `v3.17`    | `v1.4.5` | `v2.0.9`  | `v2.3.3` | `v1.2.0` | `v2.0`    | 
-
+| [Distro](https://icub-tech-iit.github.io/documentation/sw_versioning_table/) | `icub-firmware-build` | `info/firmware.info.xml` |
+|:----------------------------------------------------------------------------:|:---------------------:|:-------:|
+| `v2020.11`                                                                   | `v1.18.0`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.18.0/info/firmware.info.xml) | 
+| `v2020.08`                                                                   | `v1.17.0`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.17.0/info/firmware.info.xml) | 
+| `v2020.05`                                                                   | `v1.16.0`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.16.0/info/firmware.info.xml) | 
+| `v2020.02`                                                                   | `v1.15.0`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.15.0/info/firmware.info.xml) | 
 
 ## Maintainers
 This repository is maintained by:
