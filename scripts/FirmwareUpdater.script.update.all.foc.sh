@@ -8,9 +8,9 @@ echo ""
 echo ""
 echo ""
 
-echo "this bash is executing: ./manageFWrobot.py -n $ROBOT_CODE/robots-configuration/$YARP_ROBOT_NAME/network.$YARP_ROBOT_NAME.xml -f ../info/firmware.info.xml -p all -b foc -a update | tee ../logs/log.of.FirmwareUpdater.$YARP_ROBOT_NAME.update.all.foc.txt"
+echo "this bash is executing: ./manageFWrobot.py -n `yarp resource --from network.$YARP_ROBOT_NAME.xml` -f ../info/firmware.info.xml -p all -b foc -a update | tee ../logs/log.of.FirmwareUpdater.$YARP_ROBOT_NAME.update.all.foc.txt"
 echo ""
-./manageFWrobot.py -n $ROBOT_CODE/robots-configuration/$YARP_ROBOT_NAME/network.$YARP_ROBOT_NAME.xml -f ../info/firmware.info.xml -p all -b foc -a update | tee ../logs/log.of.FirmwareUpdater.$YARP_ROBOT_NAME.update.all.foc.txt 
+./manageFWrobot.py -n `yarp resource --from network.$YARP_ROBOT_NAME.xml` -f ../info/firmware.info.xml -p all -b foc -a update | tee ../logs/log.of.FirmwareUpdater.$YARP_ROBOT_NAME.update.all.foc.txt 
 echo ""
-echo "this bash has executed: ./manageFWrobot.py -n $ROBOT_CODE/robots-configuration/$YARP_ROBOT_NAME/network.$YARP_ROBOT_NAME.xml -f ../info/firmware.info.xml -p all -b foc -a update | tee ../logs/log.of.FirmwareUpdater.$YARP_ROBOT_NAME.update.all.foc.txt"
+echo "this bash has executed: ./manageFWrobot.py -n `yarp resource --from network.$YARP_ROBOT_NAME.xml` -f ../info/firmware.info.xml -p all -b foc -a update | tee ../logs/log.of.FirmwareUpdater.$YARP_ROBOT_NAME.update.all.foc.txt"
 echo ""
