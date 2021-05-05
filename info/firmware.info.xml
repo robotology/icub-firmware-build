@@ -75,28 +75,28 @@
     <board type="foc">
         <firmware>
             <file>../CAN/2foc/2foc.hex</file>   
-            <version major='3' minor='3' build='4'/>
+            <version major='3' minor='3' build='10'/>
         </firmware>
     </board>
 
     <board type="2foc.r1.dc">
         <firmware>
             <file>../CAN/2foc/2foc.r1.dc.hex</file>   
-            <version major='5' minor='2' build='220'/>
+            <version major='5' minor='3' build='220'/>
         </firmware>
     </board>
     
     <board type="2foc.r1.uarm">
         <firmware>
             <file>../CAN/2foc/2foc.r1.uarm.hex</file>   
-            <version major='3' minor='3' build='3'/>
+            <version major='6' minor='3' build='10'/>
         </firmware>
     </board> 
 
     <board type="2foc.r1.worm">
         <firmware>
             <file>../CAN/2foc/2foc.r1.worm.hex</file>   
-            <version major='4' minor='2' build='0'/>
+            <version major='4' minor='2' build='1'/>
         </firmware>
     </board>  
     
