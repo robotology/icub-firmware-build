@@ -89,7 +89,7 @@
     <board type="2foc.r1.uarm">
         <firmware>
             <file>../CAN/2foc/2foc.r1.uarm.hex</file>   
-            <version major='3' minor='3' build='10'/>
+            <version major='6' minor='3' build='10'/>
         </firmware>
     </board> 
 
