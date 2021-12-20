@@ -111,7 +111,7 @@
     <board type="rfe">
         <firmware>
             <file>../CAN/rfe/rfe.hex</file>   
-            <version major='1' minor='2' build='1'/>
+            <version major='1' minor='2' build='2'/>
         </firmware>
     </board>    
  
