@@ -11,6 +11,7 @@ The information of which version of each release of icub-firmware-build (and cor
 
 | [Distro](https://icub-tech-iit.github.io/documentation/sw_versioning_table/) | `icub-firmware-build` | `info/firmware.info.xml` |
 |:----------------------------------------------------------------------------:|:---------------------:|:-------:|
+| `v2022.11.0`                                                                   | `v1.29.0`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.29.0/info/firmware.info.xml) |
 | `v2022.08.1`                                                                   | `v1.27.0`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.27.0/info/firmware.info.xml) |
 | `v2022.08.0`                                                                   | `v1.26.0`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.26.0/info/firmware.info.xml) |
 | `v2022.05.2`                                                                   | `v1.25.1`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.25.1/info/firmware.info.xml) |
