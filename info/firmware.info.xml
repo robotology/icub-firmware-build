@@ -32,14 +32,14 @@
     <board type="ems4">
         <firmware>
             <file>../ETH/EMS/bin/application/ems.hex</file>  
-            <version major='3' minor='61'/>
+            <version major='3' minor='62'/>
         </firmware>
     </board>
 
     <board type="mc4plus">
         <firmware>
             <file>../ETH/MC4PLUS/bin/application/mc4plus.hex</file>  
-            <version major='3' minor='62'/>
+            <version major='3' minor='64'/>
         </firmware>
     </board>
 
@@ -47,7 +47,7 @@
     <board type="mc2plus">
         <firmware>
             <file>../ETH/MC2PLUS/bin/application/mc2plus.hex</file>  
-            <version major='3' minor='43'/>
+            <version major='3' minor='44'/>
         </firmware>
     </board>
     
@@ -61,14 +61,14 @@
      <board type="mtb4">
         <firmware>
             <file>../CAN/mtb4/mtb4.hex</file>   
-            <version major='1' minor='4' build='7'/>
+            <version major='1' minor='20' build='0'/>
         </firmware>
     </board>
 
     <board type="mtb4c">
         <firmware>
             <file>../CAN/mtb4c/mtb4c.hex</file>   
-            <version major='1' minor='4' build='7'/>
+            <version major='2' minor='0' build='0'/>
         </firmware>
     </board>    
 
@@ -118,21 +118,21 @@
     <board type="strain2">
         <firmware>
             <file>../CAN/strain2/strain2.hex</file>   
-            <version major='2' minor='0' build='15'/>
+            <version major='2' minor='0' build='16'/>
         </firmware>
     </board>
 
     <board type="strain2c">
         <firmware>
             <file>../CAN/strain2c/strain2c.hex</file>   
-            <version major='2' minor='0' build='15'/>
+            <version major='2' minor='1' build='0'/>
         </firmware>
     </board>
     
     <board type="rfe">
         <firmware>
             <file>../CAN/rfe/rfe.hex</file>   
-            <version major='1' minor='2' build='3'/>
+            <version major='1' minor='3' build='0'/>
         </firmware>
     </board>    
  
