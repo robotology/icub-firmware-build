@@ -22,6 +22,20 @@
 
 <info>
 
+    <board type="amc">
+        <firmware>
+            <file>../ETH/AMC/amc.wrist.left.hex</file>
+            <version major='101' minor='0'/>
+        </firmware>
+    </board>
+
+    <board type="amc">
+        <firmware>
+            <file>../ETH/AMC/amc.wrist.left.hex</file>
+            <version major='102' minor='0'/>
+        </firmware>
+    </board>
+
     <board type="amcbldc">
         <firmware>
             <file>../CAN/amcbldc/amcbldc.hex</file>   
