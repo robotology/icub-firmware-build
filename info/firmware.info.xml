@@ -24,7 +24,7 @@
 
     <board type="amc">
         <firmware>
-            <file>../ETH/AMC/amc.wrist.left.hex</file>
+            <file>../ETH/AMC/amc.wrist.right.hex</file>
             <version major='101' minor='1'/>
         </firmware>
     </board>
@@ -39,7 +39,7 @@
     <board type="amcbldc">
         <firmware>
             <file>../CAN/amcbldc/amcbldc.hex</file>
-            <version major='1' minor='2' build='11'/>
+            <version major='1' minor='2' build='12'/>
         </firmware>
     </board>
 
