@@ -3,7 +3,7 @@
 This repository contains builds of the firmware for the low level boards of the [iCub robot](http://icub.org/).
 The firmwares are obtained compiling the source code in [icub-firmware](https://github.com/robotology/icub-firmware) and [icub-firmware-shared](https://github.com/robotology/icub-firmware-shared) using board-specific tools.
 
-For more information on how to upload this firmwares to the boards in the iCub robot, please see the [iCub wiki page on Firmware](http://wiki.icub.org/wiki/Firmware).
+For more information on how to upload this firmwares to the boards in the iCub robot, please see the [iCub Tech Documentation page on Firmware](https://icub-tech-iit.github.io/documentation/icub_firmware).
 
 ## Firmware Versioning Table
 
