@@ -3,7 +3,7 @@
 This repository contains builds of the firmware for the low level boards of the [iCub robot](http://icub.org/).
 The firmwares are obtained compiling the source code in [icub-firmware](https://github.com/robotology/icub-firmware) and [icub-firmware-shared](https://github.com/robotology/icub-firmware-shared) using board-specific tools.
 
-For more information on how to upload this firmwares to the boards in the iCub robot, please see the [iCub wiki page on Firmware](http://wiki.icub.org/wiki/Firmware).
+For more information on how to upload this firmwares to the boards in the iCub robot, please see the [iCub Tech Documentation page on Firmware](https://icub-tech-iit.github.io/documentation/icub_firmware).
 
 ## Firmware Versioning Table
 
@@ -11,7 +11,7 @@ The information of which version of each release of icub-firmware-build (and cor
 
 | [Distro](https://icub-tech-iit.github.io/documentation/sw_versioning_table/) | `icub-firmware-build` | `info/firmware.info.xml` |
 |:----------------------------------------------------------------------------:|:---------------------:|:-------:|
-| `v2023.02.2`                                                                   | `v1.34.0`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.34.0/info/firmware.info.xml) |
+| `v2023.02.2`                                                                   | `v1.34.1`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.34.1/info/firmware.info.xml) |
 | `v2023.02.0`                                                                   | `v1.33.0`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.33.0/info/firmware.info.xml) |
 | `v2022.11.0`                                                                   | `v1.29.0`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.29.0/info/firmware.info.xml) |
 | `v2022.08.1`                                                                   | `v1.27.0`             |  [`info/firmware.info.xml`](https://github.com/robotology/icub-firmware-build/blob/v1.27.0/info/firmware.info.xml) |
