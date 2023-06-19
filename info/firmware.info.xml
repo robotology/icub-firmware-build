@@ -68,7 +68,7 @@
     <board type="mtb">
         <firmware>
             <file>../CAN/mtb/mtb.hex</file>
-            <version major='2' minor='24' build='1'/>
+            <version major='2' minor='17' build='1'/>
         </firmware>
     </board>
 
