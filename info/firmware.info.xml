@@ -25,14 +25,14 @@
     <board type="amc">
         <firmware>
             <file>../ETH/AMC/amc.wrist.right.hex</file>
-            <version major='101' minor='4'/>
+            <version major='101' minor='5'/>
         </firmware>
     </board>
 
     <board type="amc">
         <firmware>
             <file>../ETH/AMC/amc.wrist.left.hex</file>
-            <version major='102' minor='4'/>
+            <version major='102' minor='5'/>
         </firmware>
     </board>
 
