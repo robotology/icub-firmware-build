@@ -39,7 +39,7 @@
     <board type="amcbldc">
         <firmware>
             <file>../CAN/amcbldc/amcbldc.hex</file>
-            <version major='2' minor='0' build='3'/>
+            <version major='2' minor='0' build='4'/>
         </firmware>
     </board>
 
