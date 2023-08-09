@@ -103,7 +103,7 @@
     <board type="foc">
         <firmware>
             <file>../CAN/2foc/2foc.hex</file>
-            <version major='3' minor='3' build='10'/>
+            <version major='3' minor='3' build='20'/>
         </firmware>
     </board>
 
@@ -131,7 +131,7 @@
     <board type="2foc.experimentalV3.6">
         <firmware>
             <file>../CAN/2foc/2foc.experimentalV3.6.hex</file>
-            <version major='3' minor='6' build='0'/>
+            <version major='3' minor='6' build='20'/>
         </firmware>
     </board>
 
