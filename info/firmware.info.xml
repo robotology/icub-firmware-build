@@ -25,14 +25,22 @@
     <board type="amc">
         <firmware>
             <file>../ETH/AMC/amc.wrist.right.hex</file>
+<<<<<<< HEAD
             <version major='101' minor='10'/>
+=======
+            <version major='101' minor='9'/>
+>>>>>>> 71255fc (amc.wrist.left v102.9, amc.wrist.right v101.9)
         </firmware>
     </board>
 
     <board type="amc">
         <firmware>
             <file>../ETH/AMC/amc.wrist.left.hex</file>
+<<<<<<< HEAD
             <version major='102' minor='10'/>
+=======
+            <version major='102' minor='9'/>
+>>>>>>> 71255fc (amc.wrist.left v102.9, amc.wrist.right v101.9)
         </firmware>
     </board>
 
@@ -46,14 +54,22 @@
     <board type="ems4">
         <firmware>
             <file>../ETH/EMS/bin/application/ems.hex</file>
+<<<<<<< HEAD
             <version major='3' minor='74'/>
+=======
+            <version major='3' minor='73'/>
+>>>>>>> 71255fc (amc.wrist.left v102.9, amc.wrist.right v101.9)
         </firmware>
     </board>
 
     <board type="mc4plus">
         <firmware>
             <file>../ETH/MC4PLUS/bin/application/mc4plus.hex</file>
+<<<<<<< HEAD
             <version major='3' minor='77'/>
+=======
+            <version major='3' minor='76'/>
+>>>>>>> 71255fc (amc.wrist.left v102.9, amc.wrist.right v101.9)
         </firmware>
     </board>
 
@@ -61,7 +77,11 @@
     <board type="mc2plus">
         <firmware>
             <file>../ETH/MC2PLUS/bin/application/mc2plus.hex</file>
+<<<<<<< HEAD
             <version major='3' minor='56'/>
+=======
+            <version major='3' minor='55'/>
+>>>>>>> 71255fc (amc.wrist.left v102.9, amc.wrist.right v101.9)
         </firmware>
     </board>
 
