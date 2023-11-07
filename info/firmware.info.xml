@@ -40,7 +40,7 @@
     <board type="ems4">
         <firmware>
             <file>../ETH/EMS/bin/application/ems.hex</file>
-            <version major='3' minor='77'/>
+            <version major='3' minor='78'/>
         </firmware>
     </board>
 
