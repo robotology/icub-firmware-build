@@ -47,14 +47,14 @@
     <board type="mc4plus">
         <firmware>
             <file>../ETH/MC4PLUS/bin/application/mc4plus.hex</file>
-            <version major='3' minor='80'/>
+            <version major='3' minor='81'/>
         </firmware>
     </board>
 
     <board type="mc2plus">
         <firmware>
             <file>../ETH/MC2PLUS/bin/application/mc2plus.hex</file>
-            <version major='3' minor='59'/>
+            <version major='3' minor='60'/>
         </firmware>
     </board>
 
