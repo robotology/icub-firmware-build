@@ -37,6 +37,20 @@
         </firmware>
     </board>
 
+    <board type="bat.icub3">
+        <firmware>
+            <file>../CAN/bat/bat.icub3.hex</file>
+            <version major='1' minor='3' build='2'/>
+        </firmware>
+    </board>
+
+    <board type="bat.r1">
+        <firmware>
+            <file>../CAN/bat/bat.r1.hex</file>
+            <version major='1' minor='3' build='2'/>
+        </firmware>
+    </board>
+
     <board type="ems4">
         <firmware>
             <file>../ETH/EMS/bin/application/ems.hex</file>
