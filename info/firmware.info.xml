@@ -25,7 +25,7 @@
     <board type="amc">
         <firmware>
             <file>../ETH/AMC/amc.hex</file>
-            <version major='1' minor='5'/>
+            <version major='1' minor='6'/>
         </firmware>
     </board>
 
@@ -54,21 +54,21 @@
     <board type="ems4">
         <firmware>
             <file>../ETH/EMS/bin/application/ems.hex</file>
-            <version major='3' minor='80'/>
+            <version major='3' minor='81'/>
         </firmware>
     </board>
 
     <board type="mc4plus">
         <firmware>
             <file>../ETH/MC4PLUS/bin/application/mc4plus.hex</file>
-            <version major='3' minor='83'/>
+            <version major='3' minor='84'/>
         </firmware>
     </board>
 
     <board type="mc2plus">
         <firmware>
             <file>../ETH/MC2PLUS/bin/application/mc2plus.hex</file>
-            <version major='3' minor='62'/>
+            <version major='3' minor='63'/>
         </firmware>
     </board>
 
@@ -110,7 +110,7 @@
     <board type="foc">
         <firmware>
             <file>../CAN/2foc/2foc.hex</file>
-            <version major='3' minor='3' build='20'/>
+            <version major='3' minor='4' build='0'/>
         </firmware>
     </board>
 
