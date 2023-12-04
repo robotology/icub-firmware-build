@@ -37,9 +37,9 @@
         </firmware>
     </board>
 
-    <board type="bat.icub3">
+    <board type="bat">
         <firmware>
-            <file>../CAN/bat/bat.icub3.hex</file>
+            <file>../CAN/bat/bat.hex</file>
             <version major='1' minor='3' build='2'/>
         </firmware>
     </board>
