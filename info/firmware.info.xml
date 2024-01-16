@@ -33,7 +33,7 @@
     <board type="amcbldc">
         <firmware>
             <file>../CAN/amcbldc/amcbldc.hex</file>
-            <version major='2' minor='0' build='5'/>
+            <version major='2' minor='0' build='7'/>
         </firmware>
     </board>
 
