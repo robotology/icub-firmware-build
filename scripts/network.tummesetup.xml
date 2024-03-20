@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<!--    description 
+
+        this file contains the boards mounted on the robot grouped by body parts.
+        every <board> has two compulsory properties: type, name. it may also have an 
+        additional property: required. so far the only value of required is "version".
+        each <board> contains two compulsory fields: ondevice, ataddress. and it may
+        have an additional field: version (if there is the required="version" property).
+        here is description of each of the previous:
+        -   type: must have a valid board name in short format: ems4, mc4plus, foc, strain, 
+            strain2, mtb, mtb4, mais, mc4, etc.
+        -   name: can be any string.
+        -   required: if present can be only ="version". it tells that that board MUST match
+            a given version of firmware. it is used to identify amongst the many versions of mc4 
+            boards.
+        -   ondevice: tells on which device the board is located. it can be ETH (for ETH robots)
+            or CFW2 for first generation CAN robots. 
+        -   ataddress: contains the network address under device. if device is ETH there is
+            ip="10.0.1.x" and if the board is a CAN board there is also canbus="c" canadr="a".
+            if the device is CFW, then there is only canbus="c" canadr="a".
+         -  version: contains the required version. typically only major and mino values are specified.
+         
+        the aim of this files is to be parsed by the python program robotFWmanager.py
+  -->
+
+<robot>
+
+    <part name="head">
+
+        <board type='mc4plus' name="tumme-setup-eb20">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.20" />
+        </board>
+        
+        <board type='mc4plus' name="tumme-setup-eb21">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.21" />
+        </board>
+
+        <board type='rfe' name="rfe.20.1">
+            <ondevice>ETH</ondevice>
+            <ataddress ip="10.0.1.20" canbus="1" canadr="1"  />
+            <ataddress ip="10.0.1.1" canbus="1" canadr="14"  />
+
+        </board>
+        
+    </part>
+   
+</robot>
+
