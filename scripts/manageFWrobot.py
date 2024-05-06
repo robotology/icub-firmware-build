@@ -1620,6 +1620,7 @@ def print_result(nameOfCaller, nFound, nExcluded, nFailures):
 if __name__ == '__main__':
 
     import argparse
+
     from argparse import RawTextHelpFormatter
     parser = argparse.ArgumentParser(description='This script is a front-end for the FirmwareUpdater program in non GUI mode. ' +
                                                  'It performs automatic firmware program on the whole robot, on parts of it, or even on selected board types. ' +
@@ -1673,6 +1674,7 @@ if __name__ == '__main__':
     _excludedboard = args.excludeboard
 
 
+    import datetime
 
     # some warnings ...
 
@@ -1700,7 +1702,10 @@ if __name__ == '__main__':
         _verbosityFU = 1
 
 
+    # get the current date and time
+    now = datetime.datetime.now()
 
+    print(now)
 
 
     # open the xml files: one for robot description and one for board properties
@@ -1738,4 +1743,9 @@ if __name__ == '__main__':
     if _verbosity > 0:
         print (pyprefix + '[info] the script is over')
 
+
+    # get the current date and time
+    now = datetime.datetime.now()
+
+    print(now)
 
