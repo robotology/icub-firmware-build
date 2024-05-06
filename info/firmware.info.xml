@@ -120,6 +120,13 @@
         </firmware>
     </board>
 
+    <board type="foc-special">
+        <firmware>
+            <file>../CAN/2foc/2foc-special.hex</file>
+            <version major='3' minor='3' build='26'/>
+        </firmware>
+    </board>
+
     <board type="2foc.r1.dc">
         <firmware>
             <file>../CAN/2foc/2foc.r1.dc.hex</file>

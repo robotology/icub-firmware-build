@@ -579,6 +579,8 @@ def getTimeOfFirmwareUpdate(brdtype):
         r = 15
     elif brdtype == 'foc':
         r = 105
+    elif brdtype == 'foc-special':
+        r = 105
     elif brdtype == 'mtb':
         r = 105
     elif brdtype == 'mtb4':
@@ -1639,10 +1641,10 @@ if __name__ == '__main__':
                     help='the part on which to perform the action. default = all')
     #tumme
     parser.add_argument('-b', '--board', action='store', required=False, default='all', 
-                    choices=['all', 'ems4', 'mc4plus', 'mc2plus', 'mtb', 'mtb4', 'mtb4c','strain', 'strain2', 'strain2c', 'rfe', 'foc', 'mc4', 'mais', 'bll', 'dsp', 'amc', 'amcbldc'],
+                    choices=['all', 'ems4', 'mc4plus', 'mc2plus', 'mtb', 'mtb4', 'mtb4c','strain', 'strain2', 'strain2c', 'rfe', 'foc', 'foc-special', 'mc4', 'mais', 'bll', 'dsp', 'amc', 'amcbldc'],
                     help='the board on which to perform the action. default = all')
     parser.add_argument('-xb', '--excludeboard', action='store', required=False, default='none', 
-                    choices=['none', 'ems4', 'mc4plus', 'mc2plus', 'mtb', 'mtb4', 'mtb4c', 'strain', 'strain2', 'strain2c', 'rfe', 'foc', 'mc4', 'mais', 'bll', 'dsp', 'amc', 'amcbldc'],
+                    choices=['none', 'ems4', 'mc4plus', 'mc2plus', 'mtb', 'mtb4', 'mtb4c', 'strain', 'strain2', 'strain2c', 'rfe', 'foc', 'foc-special', 'mc4', 'mais', 'bll', 'dsp', 'amc', 'amcbldc'],
                     help='exclude a board on which to perform the action. default = none')
     parser.add_argument('-a', '--action', action='store', required=True, default='info', choices=['info', 'topology', 'query', 'verify', 'update', 'program', 'forcemaintenance', 'forceapplication'],
                     help='the action to perform on board(s) selected by --part and --board. ' +
