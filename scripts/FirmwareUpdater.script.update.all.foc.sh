@@ -12,9 +12,9 @@ read -p "Continue? (Y/N): " confirm && [[ $confirm == [yY] || $confirm == [yY][e
 
 echo "Starting the 2FOC update with 2foc.hex..."
 
-echo "this bash is executing: ./manageFWrobot.py -n `yarp resource --from network.$YARP_ROBOT_NAME.2foc.xml` -f ../info/firmware.info.xml -p all -b foc -a update | tee ../logs/log.of.FirmwareUpdater.ergocub-2foc..update.all.foc.txt"
+echo "this bash is executing: ./manageFWrobot.py -n `yarp resource --from network.$YARP_ROBOT_NAME-2foc.xml` -f ../info/firmware.info.xml -p all -b foc -a update | tee ../logs/log.of.FirmwareUpdater.ergocub-2foc..update.all.foc.txt"
 echo ""
-./manageFWrobot.py -n `yarp resource --from network.$YARP_ROBOT_NAME.2foc.xml | grep ^\".*$ | sed 's/"//g'` -f ../info/firmware.info.xml -p all -b foc -a update | tee ../logs/log.of.FirmwareUpdater..ergocub-2foc.update.all.foc.txt 
+./manageFWrobot.py -n `yarp resource --from network.$YARP_ROBOT_NAME-2foc.xml | grep ^\".*$ | sed 's/"//g'` -f ../info/firmware.info.xml -p all -b foc -a update | tee ../logs/log.of.FirmwareUpdater..ergocub-2foc.update.all.foc.txt 
 echo ""
-echo "this bash has executed: ./manageFWrobot.py -n `yarp resource --from network.$YARP_ROBOT_NAME.2foc.xml` -f ../info/firmware.info.xml -p all -b foc -a update | tee ../logs/log.of.FirmwareUpdater..ergocub-2foc.update.all.foc.txt"
+echo "this bash has executed: ./manageFWrobot.py -n `yarp resource --from network.$YARP_ROBOT_NAME-2foc.xml` -f ../info/firmware.info.xml -p all -b foc -a update | tee ../logs/log.of.FirmwareUpdater..ergocub-2foc.update.all.foc.txt"
 echo ""
