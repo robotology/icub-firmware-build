@@ -43,7 +43,9 @@ if %errorlevel% NEQ 0 goto :error
 goto :end
 :error
 echo There was an error.
+PAUSE
 EXIT 1
 :end
 echo End.
+PAUSE
 EXIT 0
