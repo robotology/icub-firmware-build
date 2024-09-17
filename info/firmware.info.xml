@@ -46,14 +46,14 @@
     <board type="bat">
         <firmware>
             <file>../CAN/bat/bat.hex</file>
-            <version major='1' minor='3' build='4'/>
+            <version major='1' minor='3' build='5'/>
         </firmware>
     </board>
 
     <board type="bat.r1">
         <firmware>
             <file>../CAN/bat/bat.r1.hex</file>
-            <version major='1' minor='3' build='3'/>
+            <version major='1' minor='3' build='5'/>
         </firmware>
     </board>
 
