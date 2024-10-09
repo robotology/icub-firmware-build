@@ -32,14 +32,14 @@
     <board type="amc2c">
         <firmware>
             <file>../ETH/AMC/amc2c.hex</file>
-            <version major='3' minor='0' build='4'/>
+            <version major='3' minor='1' build='0'/>
         </firmware>
     </board>    
 
     <board type="amcbldc">
         <firmware>
             <file>../CAN/amcbldc/amcbldc.hex</file>
-            <version major='2' minor='0' build='13'/>
+            <version major='2' minor='1' build='0'/>
         </firmware>
     </board>
 
