@@ -25,7 +25,7 @@
     <board type="amc">
         <firmware>
             <file>../ETH/AMC/amc.hex</file>
-            <version major='2' minor='11'/>
+            <version major='2' minor='12'/>
         </firmware>
     </board>
     
