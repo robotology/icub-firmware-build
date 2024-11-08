@@ -116,7 +116,7 @@
     <board type="foc">
         <firmware>
             <file>../CAN/2foc/2foc.hex</file>
-            <version major='3' minor='3' build='36'/>
+            <version major='3' minor='3' build='37'/>
         </firmware>
     </board>
 
