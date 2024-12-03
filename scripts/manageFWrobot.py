@@ -819,7 +819,7 @@ def do_firmware_update(brd, prp):
                     adr = brd.find('ataddress').attrib
                     print (pyprefix + debugprefix + 'do_firmware_update(): no need to program board @ ' + adr.get('ip', '0')    )
             elif 1 == r:
-                print (pyprefix + '  - message: the board has an old FW which is going to be udapted.')
+                print (pyprefix + '  - message: the board has an old FW which is going to be updated.')
                 if _verbose > 1:
                     print (pyprefix + debugprefix + 'do_firmware_update(): will program board @ ' + adr.get('ip', '0'))
                 r = do_firmware_program_eth(brd, prp)
@@ -837,7 +837,7 @@ def do_firmware_update(brd, prp):
                     adr = brd.find('ataddress').attrib
                     print (pyprefix + debugprefix + 'do_firmware_update(): no need to program board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')    )
             elif 1 == r:
-                print (pyprefix + '  - message: the board has an old FW which is going to be udapted.')
+                print (pyprefix + '  - message: the board has an old FW which is going to be updated.')
                 if _verbose > 1:
                     print (pyprefix + debugprefix + 'do_firmware_update(): will program board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') )
                 r = do_firmware_program_canovereth(brd, prp)
@@ -860,7 +860,7 @@ def do_firmware_update(brd, prp):
                 adr = brd.find('ataddress').attrib
                 print (pyprefix + debugprefix + 'do_firmware_update(): no need to program board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0')    )
         elif 1 == r:
-            print (pyprefix + '  - message: the board has an old FW which is going to be udapted.')
+            print (pyprefix + '  - message: the board has an old FW which is going to be updated.')
             if _verbose > 1:
                 print (pyprefix + debugprefix + 'do_firmware_update(): will program board @ ' + adr.get('ip', '0') + ':CAN' + adr.get('canbus', '0') + ':' + adr.get('canadr', '0') )
             r = do_firmware_program_cfw(brd, prp)
