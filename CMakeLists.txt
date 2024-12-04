@@ -12,6 +12,7 @@ set(ICUB_FIRMWARE_INSTALL_ROOT ${CMAKE_INSTALL_DATAROOTDIR}/icub-firmware)
 install(DIRECTORY CAN DESTINATION ${ICUB_FIRMWARE_INSTALL_ROOT})
 install(DIRECTORY ETH DESTINATION ${ICUB_FIRMWARE_INSTALL_ROOT})
 install(DIRECTORY info DESTINATION ${ICUB_FIRMWARE_INSTALL_ROOT})
+install(DIRECTORY logs DESTINATION ${ICUB_FIRMWARE_INSTALL_ROOT})
 
 # The scripts installed in scripts folder need to be installed with a bit of care.
 # First of all, they should be installed with executable permissions, then a
@@ -44,3 +45,4 @@ foreach(bash_script ${bash_scripts})
                    ${CMAKE_CURRENT_BINARY_DIR}/${ICUB_FIRMARE_BASH_SCRIPT_NAME})
     install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${ICUB_FIRMARE_BASH_SCRIPT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
 endforeach()
+
