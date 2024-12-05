@@ -42,7 +42,8 @@ foreach(bash_script ${bash_scripts})
                        ${CMAKE_INSTALL_PREFIX}/${ICUB_FIRMWARE_INSTALL_ROOT}/scripts)
     get_filename_component(ICUB_FIRMARE_BASH_SCRIPT_NAME ${bash_script} NAME)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/FirmwareUpdater.script.redirect.sh.in
-                   ${CMAKE_CURRENT_BINARY_DIR}/${ICUB_FIRMARE_BASH_SCRIPT_NAME})
+                   ${CMAKE_CURRENT_BINARY_DIR}/${ICUB_FIRMARE_BASH_SCRIPT_NAME}
+                   @ONLY)
     install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${ICUB_FIRMARE_BASH_SCRIPT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
 endforeach()
 
