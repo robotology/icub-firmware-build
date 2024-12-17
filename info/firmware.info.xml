@@ -57,6 +57,13 @@
         </firmware>
     </board>
 
+    <board type="bms">
+        <firmware>
+            <file>../CAN/bms/IIT1A_041024_03.elf</file>
+            <version major='0' minor='1' build='0'/>
+        </firmware>
+    </board>
+
     <board type="ems4">
         <firmware>
             <file>../ETH/EMS/bin/application/ems.hex</file>
