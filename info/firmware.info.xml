@@ -95,14 +95,14 @@
      <board type="mtb4">
         <firmware>
             <file>../CAN/mtb4/mtb4.hex</file>
-            <version major='1' minor='23' build='0'/>
+            <version major='1' minor='24' build='0'/>
         </firmware>
     </board>
 
     <board type="mtb4c">
         <firmware>
             <file>../CAN/mtb4c/mtb4c.hex</file>
-            <version major='2' minor='3' build='0'/>
+            <version major='2' minor='4' build='0'/>
         </firmware>
     </board>
 
