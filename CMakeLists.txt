@@ -26,7 +26,7 @@ file(GLOB py_scripts ${CMAKE_CURRENT_SOURCE_DIR}/scripts/*.py)
 # Python scripts are directly installed in ${ICUB_FIRMWARE_INSTALL_ROOT}/scripts,
 # as they are not invoked directly by the user
 foreach(py_script ${py_scripts})
-    install(PROGRAMS ${script} DESTINATION ${ICUB_FIRMWARE_INSTALL_ROOT}/scripts)
+    install(PROGRAMS ${py_scripts} DESTINATION ${ICUB_FIRMWARE_INSTALL_ROOT}/scripts)
 endforeach()
 
 # Bash scripts are directly installed in ${ICUB_FIRMWARE_INSTALL_ROOT}/scripts,
