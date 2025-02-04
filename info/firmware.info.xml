@@ -25,14 +25,14 @@
     <board type="amc">
         <firmware>
             <file>../ETH/AMC/amc.hex</file>
-            <version major='2' minor='15'/>
+            <version major='2' minor='16'/>
         </firmware>
     </board>
     
     <board type="amc2c">
         <firmware>
             <file>../ETH/AMC/amc2c.hex</file>
-            <version major='3' minor='1' build='0'/>
+            <version major='3' minor='2' build='0'/>
         </firmware>
     </board>    
 
