@@ -23,7 +23,7 @@ jobs:
     - name: Check if specific files are modified
       id: check_files
       run: |
-        TMP_OR_DATA_MODIFIED=$(jq '.[] | select(.filename | startswith("ETH\AMC") or startswith("CAN/") or startswith("ETH\EMS\bin\application") or startswith("ETH\MC2PLUS\bin\application") or startswith("ETH\MC4PLUS\bin\application") )' pr_files.json)
+        TMP_OR_DATA_MODIFIED=$(jq '.[] | select(.filename | startswith("ETH/AMC") or startswith("CAN/") or startswith("ETH/EMS/bin/application") or startswith("ETH/MC2PLUS/bin/application") or startswith("ETH/MC4PLUS/bin/application") )' pr_files.json)
         SPECIFIC_FILE_MODIFIED=$(jq '.[] | select(.filename == "info/firmware.info.xml")' pr_files.json)
 
         if [ -n "$TMP_OR_DATA_MODIFIED" ] && [ -z "$SPECIFIC_FILE_MODIFIED" ]; then
