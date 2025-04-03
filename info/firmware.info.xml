@@ -123,7 +123,7 @@
     <board type="foc">
         <firmware>
             <file>../CAN/2foc/2foc.hex</file>
-            <version major='3' minor='3' build='40'/>
+            <version major='3' minor='3' build='42'/>
         </firmware>
     </board>
 
