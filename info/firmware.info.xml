@@ -59,8 +59,8 @@
 
     <board type="bms">
         <firmware>
-            <file>../CAN/bms/IIT1A_041024_03.elf</file>
-            <version major='0' minor='1' build='0'/>
+            <file>../CAN/bms/IIT1A_090525_00.elf</file>
+            <version major='0' minor='2' build='0'/>
         </firmware>
     </board>
 
