@@ -95,7 +95,7 @@
      <board type="mtb4">
         <firmware>
             <file>../CAN/mtb4/mtb4.hex</file>
-            <version major='1' minor='24' build='0'/>
+            <version major='1' minor='25' build='0'/>
         </firmware>
     </board>
 
