@@ -1131,87 +1131,100 @@ def program(targetpart, targetboard, robotroot, boardroot, verbose):
     parallel = caller_locals.get('_parallel', False)
 
     if parallel:
-        eth_boards = []
-        can_addresses = []
-        firmware_file = None
+        from collections import defaultdict
+        eth_can_groups = defaultdict(lambda: defaultdict(list))  # {eth_ip: {firmware_file: [CANx:y, ...]}}
+        eth_boards_to_program = []
         found_any_board = False
-        found_any_eth = False
+
         for part in robotroot.findall('part'):
             if ('all' == targetpart) or (targetpart == part.get('name')):
                 for brd in part.findall('board'):
                     found_any_board = True
                     prp = get_board_properties2(boardroot, brd)
                     if len(prp) == 0:
-                        print(pyprefix + f'[parallel][WARNING] Board "{brd.get("type")}" in part "{part.get("name")}" found in network XML but not in firmware XML.')
                         continue
                     if ('all' == targetboard) or (targetboard == brd.get('type')):
                         if _excludedboard == brd.get('type'):
                             continue
                         if brd.find('ondevice').text == 'ETH':
-                            found_any_eth = True
                             adr = brd.find('ataddress').attrib
                             ip = adr.get('ip', None)
                             canbus = adr.get('canbus', None)
                             canadr = adr.get('canadr', None)
                             if ip and canbus and canadr:
-                                can_addresses.append(f'CAN{canbus}:{canadr}')
                                 firmware_file = prp.find('firmware').find('file').text
-                                eth_boards.append(ip)
+                                can_addr = f'CAN{canbus}:{canadr}'
+                                eth_can_groups[ip][firmware_file].append(can_addr)
+                            elif ip and (canbus is None or canbus == '0') and (canadr is None or canadr == '0'):
+                                # ETH-only board (main ETH board)
+                                eth_boards_to_program.append((brd, prp))  # <-- ADD THIS LINE
+
         if not found_any_board:
             print(pyprefix + f'[parallel][WARNING] No boards found in network XML for part="{targetpart}" and board="{targetboard}".')
             return
-        if not found_any_eth:
-            print(pyprefix + f'[parallel][WARNING] No ETH boards found in network XML for part="{targetpart}" and board="{targetboard}".')
-            return
-        if not can_addresses:
-            print(pyprefix + f'[parallel][WARNING] No CAN addresses found for ETH boards in network XML for part="{targetpart}" and board="{targetboard}".')
-            return
-        if not firmware_file:
-            print(pyprefix + f'[parallel][WARNING] No firmware file found in firmware XML for board="{targetboard}".')
-            return
-        # If we have at least one valid board, proceed with parallel programming
-        ipaddress = eth_boards[0]
-        # --- Ensure ETH board is in maintenance mode ---
-        eth_brd = None
-        for part in robotroot.findall('part'):
-            for brd in part.findall('board'):
-                if brd.find('ondevice').text == 'ETH':
-                    adr = brd.find('ataddress').attrib
-                    if adr.get('ip', None) == ipaddress:
-                        eth_brd = brd
-                        break
-            if eth_brd:
-                break
-        if eth_brd:
+        
+        # 1. Program all CAN-over-ETH boards in parallel (grouped by ETH IP and firmware file)
+        for ipaddress, fw_groups in eth_can_groups.items():
+            # Ensure ETH board is in maintenance mode
+            eth_brd = None
+            for part in robotroot.findall('part'):
+                for brd in part.findall('board'):
+                    if brd.find('ondevice').text == 'ETH':
+                        adr = brd.find('ataddress').attrib
+                        if adr.get('ip', None) == ipaddress and not ('canbus' in adr and adr['canbus'] != '0'):
+                            eth_brd = brd
+                            break
+                if eth_brd:
+                    break
+            if not eth_brd:
+                print(pyprefix + f'[parallel] ERROR: Could not find ETH board {ipaddress} in XML.')
+                continue
             prp = get_board_properties2(boardroot, eth_brd)
             r_maint = eth_force_maintenance(eth_brd, prp)
             if r_maint != 0:
                 print(pyprefix + f'[parallel] ERROR: Failed to put ETH board {ipaddress} in maintenance mode.')
-                return
-        else:
-            print(pyprefix + f'[parallel] ERROR: Could not find ETH board {ipaddress} in XML.')
-            return
-        addresses_str = ' '.join(can_addresses)
-        command = f'FirmwareUpdater --nogui --device ETH --id eth1 --eth_board {ipaddress} --addresses "{addresses_str}" --file {firmware_file} --program'
-        print(pyprefix + f'[parallel] Running: {command}')
-        proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        board_results = {}
-        for line in proc.stdout:
-            print(line, end='')  # Still print all output
-            # Try to detect overall success
-            if "All Board OK" in line:
-                for addr in can_addresses:
-                    board_results[addr] = "SUCCESS"
-        proc.wait()
-        if proc.returncode == 0:
-            print(pyprefix + '[parallel] SUCCESS')
-        else:
-            print(pyprefix + '[parallel] FAILURE')
-        # Print summary per board
-        if board_results:
-            print(pyprefix + '[parallel] Board programming summary:')
-            for board, result in board_results.items():
-                print(f"{pyprefix}    {board}: {result}")
+                continue
+
+            for firmware_file, can_addresses in fw_groups.items():
+                addresses_str = ' '.join(can_addresses)
+                command = f'FirmwareUpdater --nogui --device ETH --id eth1 --eth_board {ipaddress} --addresses "{addresses_str}" --file {firmware_file} --program'
+                print(f'FirmwareUpdater --nogui --device ETH --id eth1 --eth_board {ipaddress} --addresses "{addresses_str}" --file {firmware_file} --program')
+                print(pyprefix + f'[parallel] Running: {command}')
+                proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+                board_results = {}
+                for line in proc.stdout:
+                    print(line, end='')  # Still print all output
+                    if "All Board OK" in line:
+                        for addr in can_addresses:
+                            board_results[addr] = "SUCCESS"
+                proc.wait()
+                if proc.returncode == 0:
+                    print(pyprefix + '[parallel] SUCCESS')
+                else:
+                    print(pyprefix + '[parallel] FAILURE')
+                if board_results:
+                    print(pyprefix + '[parallel] Board programming summary:')
+                    for board, result in board_results.items():
+                        print(f"{pyprefix}    {board}: {result}")
+
+        # 2. Program all ETH-only boards sequentially (one by one)
+        eth_success = []
+        for brd, prp in eth_boards_to_program:
+            prp = get_board_properties2(boardroot, brd)  # Always get the correct firmware info for this board
+            print(pyprefix + f'[parallel] Programming ETH board {from_board_to_stringofaddress(brd)} using do_firmware_program_eth()')
+            r = do_firmware_program_eth(brd, prp)
+            adr = brd.find('ataddress').attrib
+            ip = adr.get('ip', None)
+            if r == 0:
+                print(pyprefix + f'[parallel][ETH {ip}] SUCCESS')
+                eth_success.append(ip)
+            else:
+                print(pyprefix + f'[parallel][ETH {ip}] FAILURE')
+
+        if eth_success:
+            print(pyprefix + '[parallel] ETH boards successfully programmed:')
+            for ip in eth_success:
+                print(pyprefix + f'    ETH {ip}')
         return
 
     r = 1
@@ -1302,10 +1315,13 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
 
     # First pass: collect ETH:CAN boards that need update
     if parallel:
+        from collections import defaultdict
+        eth_can_groups = defaultdict(lambda: defaultdict(list))  # {eth_ip: {firmware_file: [CANx:y, ...]}}
+        found_any_board = False
+
         for part in robotroot.findall('part'):
             if ('all' == targetpart) or (targetpart == part.get('name')):
                 for brd in part.findall('board'):
-                    found_any_board = True
                     prp = get_board_properties2(boardroot, brd)
                     if len(prp) == 0:
                         continue
@@ -1322,74 +1338,58 @@ def update(targetpart, targetboard, robotroot, boardroot, verbose):
                                 # Only add if firmware is old (needs update)
                                 r = do_firmware_verify_canovereth(brd, prp)
                                 if r == 1:
-                                    found_any_eth = True
-                                    can_addresses.append(f'CAN{canbus}:{canadr}')
                                     firmware_file = prp.find('firmware').find('file').text
-                                    eth_boards.append(ip)
-                                elif r == 0:
-                                    all_can_boards.append(f'CAN{canbus}:{canadr}')  # <-- Track up-to-date boards
-        if parallel:
-            if not found_any_board:
-                print(pyprefix + f'[parallel][WARNING] No boards found in network XML for part="{targetpart}" and board="{targetboard}".')
-                return
-            if not found_any_eth:
-                print(pyprefix + f'[parallel] No CAN boards needing update found in network XML for part="{targetpart}" and board="{targetboard}".')
-                # Print which boards are already up-to-date
-                if all_can_boards:
-                    print(pyprefix + f'[parallel] The following CAN boards are already up-to-date:')
-                    for board_id in all_can_boards:
-                        print(f"{pyprefix}    {board_id}: ALREADY UP-TO-DATE")
-                return
-            if not can_addresses:
-                print(pyprefix + f'[parallel][WARNING] No CAN addresses found for ETH boards needing update in network XML for part="{targetpart}" and board="{targetboard}".')
-                return
-            if not firmware_file:
-                print(pyprefix + f'[parallel][WARNING] No firmware file found in firmware XML for board="{targetboard}".')
-                return
-            # Use the first ETH board IP (assume all CANs are on the same ETH board)
-            ipaddress = eth_boards[0]
-            # --- Ensure ETH board is in maintenance mode ---
+                                    can_addr = f'CAN{canbus}:{canadr}'
+                                    eth_can_groups[ip][firmware_file].append(can_addr)
+                                    found_any_board = True
+
+        if not found_any_board:
+            print(pyprefix + f'[parallel][WARNING] No CAN boards needing update found in network XML for part="{targetpart}" and board="{targetboard}".')
+            return
+
+        for ipaddress, fw_groups in eth_can_groups.items():
+            # Ensure ETH board is in maintenance mode
             eth_brd = None
             for part in robotroot.findall('part'):
                 for brd in part.findall('board'):
                     if brd.find('ondevice').text == 'ETH':
                         adr = brd.find('ataddress').attrib
-                        if adr.get('ip', None) == ipaddress:
+                        if adr.get('ip', None) == ipaddress and not ('canbus' in adr and adr['canbus'] != '0'):
                             eth_brd = brd
                             break
                 if eth_brd:
                     break
-            if eth_brd:
-                prp = get_board_properties2(boardroot, eth_brd)
-                r_maint = eth_force_maintenance(eth_brd, prp)
-                if r_maint != 0:
-                    print(pyprefix + f'[parallel] ERROR: Failed to put ETH board {ipaddress} in maintenance mode.')
-                    return
-            else:
+            if not eth_brd:
                 print(pyprefix + f'[parallel] ERROR: Could not find ETH board {ipaddress} in XML.')
-                return
-            addresses_str = ' '.join(can_addresses)
-            command = f'FirmwareUpdater --nogui --device ETH --id eth1 --eth_board {ipaddress} --addresses "{addresses_str}" --file {firmware_file} --program'
-            print(pyprefix + f'[parallel] Running: {command}')
-            proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-            board_results = {}
-            for line in proc.stdout:
-                print(line, end='')  # Still print all output
-                # Try to detect overall success
-                if "All Board OK" in line:
-                    for addr in can_addresses:
-                        board_results[addr] = "SUCCESS"
-            proc.wait()
-            if proc.returncode == 0:
-                print(pyprefix + '[parallel] SUCCESS')
-            else:
-                print(pyprefix + '[parallel] FAILURE')
-            # Print summary per board
-            if board_results:
-                print(pyprefix + '[parallel] Board programming summary:')
-                for board, result in board_results.items():
-                    print(f"{pyprefix}    {board}: {result}")
-            return
+                continue
+            prp = get_board_properties2(boardroot, eth_brd)
+            r_maint = eth_force_maintenance(eth_brd, prp)
+            if r_maint != 0:
+                print(pyprefix + f'[parallel] ERROR: Failed to put ETH board {ipaddress} in maintenance mode.')
+                continue
+
+            for firmware_file, can_addresses in fw_groups.items():
+                addresses_str = ' '.join(can_addresses)
+                command = f'FirmwareUpdater --nogui --device ETH --id eth1 --eth_board {ipaddress} --addresses "{addresses_str}" --file {firmware_file} --program'
+                print(f'FirmwareUpdater --nogui --device ETH --id eth1 --eth_board {ipaddress} --addresses "{addresses_str}" --file {firmware_file} --program')
+                print(pyprefix + f'[parallel] Running: {command}')
+                proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+                board_results = {}
+                for line in proc.stdout:
+                    print(line, end='')  # Still print all output
+                    if "All Board OK" in line:
+                        for addr in can_addresses:
+                            board_results[addr] = "SUCCESS"
+                proc.wait()
+                if proc.returncode == 0:
+                    print(pyprefix + '[parallel] SUCCESS')
+                else:
+                    print(pyprefix + '[parallel] FAILURE')
+                if board_results:
+                    print(pyprefix + '[parallel] Board programming summary:')
+                    for board, result in board_results.items():
+                        print(f"{pyprefix}    {board}: {result}")
+        return
 
     # Normal (non-parallel) update logic
     r = 1
