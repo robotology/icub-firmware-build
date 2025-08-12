@@ -24,14 +24,14 @@
 
     <board type="amc">
         <firmware>
-            <file>../ETH/AMC/amc.hex</file>
+            <file>../ETH/AMC/amc.appl.yri.hex</file>
             <version major='2' minor='25'/>
         </firmware>
     </board>
     
     <board type="amc2c">
         <firmware>
-            <file>../ETH/AMC/amc2c.hex</file>
+            <file>../ETH/AMC/amc.appl.mot.hex</file>
             <version major='3' minor='10' build='0'/>
         </firmware>
     </board>    
