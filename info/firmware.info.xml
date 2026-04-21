@@ -25,7 +25,7 @@
     <board type="amc">
         <firmware>
             <file>../ETH/AMC/amc.appl.yri.hex</file>
-            <version major='2' minor='33'/>
+            <version major='2' minor='34'/>
         </firmware>
     </board>
     
