@@ -32,7 +32,7 @@
     <board type="amc2c">
         <firmware>
             <file>../ETH/AMC/amc.appl.mot.hex</file>
-            <version major='3' minor='13' build='0'/>
+            <version major='3' minor='11' build='0'/>
         </firmware>
     </board>    
 
